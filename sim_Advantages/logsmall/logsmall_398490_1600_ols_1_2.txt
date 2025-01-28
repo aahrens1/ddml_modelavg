@@ -1,0 +1,1017 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /cluster/home/kahrens/ddml_applied/sim_Advantages/logsmall/logsmal
+> l_398490_1600_ols_1_2.txt
+  log type:  text
+ opened on:  24 Jun 2024, 23:08:30
+
+. 
+. whichpkg ddml
+All instances on search path of components of package ddml.pkg:
+
+/cluster/home/kahrens/ado/plus/_/_ddml_allcombos.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_copy.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_crossfit.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_describe.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_drop.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_estimate_ate_late.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_estimate_linear.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_export.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_extract.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_nnls.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_nnls_p.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_overlap.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_sample.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_save.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_ddml_use.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/c/crossfit.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/d/ddml.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/l/lddml.mlib
+
+/cluster/home/kahrens/ado/plus/c/crossfit.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml.sthlp
+{* *! version 6aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_ate.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_crossfit.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_describe.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_eq.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_estimate.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_describe.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_export.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_extract.sthlp
+{* *! version 31july2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_fcluster.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_flexiv_anylearner_basic.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_flexiv_anylearner_detailed.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_interactive_pystacked_basic.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_interactive_pystacked_detailed.st
+> hlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_interactiveiv_pystacked_basic.sth
+> lp
+{* *! version 3august2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_interactiveiv_pystacked_detailed.
+> sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_overlap.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_partial_anylearner_detailed.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_partial_pystacked_basic.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_partial_pystacked_detailed.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_partial_pystacked_multitreat.sthl
+> p
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_partialiv_anylearner_basic.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_partialiv_pystacked_basic.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_example_stacking.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_examples.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_export.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_extract.sthlp
+{* *! version 3aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_fiv.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_init.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_interactive.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_interactiveiv.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_iv.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_late.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_overlap.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_overview.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_partial.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_sample.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/d/ddml_stacking.sthlp
+{* *! version 17aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/q/qddml.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/q/qddml.sthlp
+{* *! version 17aug2023}{...}
+
+. whichpkg pystacked
+All instances on search path of components of package pystacked.pkg:
+
+/cluster/home/kahrens/ado/plus/p/pystacked.ado
+*! pystacked v0.7.5
+*! last edited: 7aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/_/_pyparse.ado
+*! pystacked v0.7.5
+*! last edited: 7aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/p/pystacked_p.ado
+*! pystacked v0.7.5
+*! last edited: 7aug2023
+*! authors: aa/ms
+
+/cluster/home/kahrens/ado/plus/p/pystacked.sthlp
+{* *! version 7aug2023}{...}
+
+/cluster/home/kahrens/ado/plus/py/pystacked.py
+
+/cluster/home/kahrens/ado/plus/py/pystacked_p.py
+
+. 
+. cap set seed `1'
+
+. di "`1' `2' `3' `4' `5'"
+398490 1600 ols 1 2
+
+. 
+. global Y net_tfa
+
+. global D e401  
+
+. global X age inc educ fsize marr twoearn db pira hown 
+
+. global Xcont age inc educ fsize
+
+. global Xbin marr twoearn db pira hown 
+
+. 
+. global reps = 10
+
+. global each_reps = 5 
+
+. if ("`4'"=="1" & "`2'"!="9915") {
+.         global reps 1
+.         global each_reps 100
+. }
+
+. if ("`4'"=="1" & "`2'"=="9915") {
+.         global reps 5
+.         global each_reps 10
+. }
+
+. 
+. * options
+. global pyopt njobs(1)  
+
+. global rflow max_features(8) min_samples_leaf(1) max_samples(.7)
+
+. global rfhigh max_features(5) min_samples_leaf(10) max_samples(.7)
+
+. global gradlow n_estimators(500) learning_rate(0.01)
+
+. global gradhigh n_estimators(250) learning_rate(0.01)
+
+. global nnetopt hidden_layer_sizes(5 5 5)
+
+. global xvar_poly2 c.($Xcont)##c.($Xcont) $Xbin
+
+. global xvar_poly10 poly10* $Xbin 
+
+. 
+. * program 
+. cap program drop mysim
+
+. program define mysim , rclass
+  1. 
+.         syntax [,       dgp(string) ///
+>                                 kappa1(real 0.35) ///
+>                                 kappa2(real 55500) ///
+>                                 tau(real 6000) ///
+>                                 obs(integer 9915) ///
+>                                 dsets(integer 1) ///
+>                                 folds(integer 2) ///
+>                         ]
+  2.                         
+.         use "../Data/PVW_data.dta", clear
+  3.         
+.         *if "`tau'"=="" {
+.         *       local dgp ols
+.         *       local kappa1 0.35
+.         *       local kappa2 55500
+.         *       local tau 6000
+.         *       local obs 3000
+.         *       local dsets 1
+.         *       local folds 2
+.         *}
+.         
+.         *** DGP // coef = 5896.198 
+.         reg $Y $D $X  
+  4.         gen double yr = $Y - _b[$D]*$D
+  5.         
+.         *** fit learners to reduced form
+.         if ("`dgp'"=="gradboost") {
+  6.                 pystacked yr $X, method(gradboost) $pyopt 
+  7.                 predict double ghat
+  8.                 pystacked $D $X, method(gradboost) $pyopt 
+  9.                 predict double hhat 
+ 10.                 local dgpflag = 1
+ 11.                 local kappa2 = 54000
+ 12.         }
+ 13.         else if ("`dgp'"=="ols") {
+ 14.                 reg yr $X
+ 15.                 predict double ghat
+ 16.                 reg $D $X
+ 17.                 predict double hhat 
+ 18.                 local dgpflag = 0
+ 19.                 local kappa2 = 55500
+ 20.         }
+ 21.         else {
+ 22.                 di as err "dgp unknown"
+ 23.                 exit 198
+ 24.         }
+ 25. 
+.         *** draw bootstrap sample
+.         if `dsets'==1 {
+ 26.                 bsample `obs'
+ 27.         }
+ 28.         else {
+ 29.                 * save original data
+.                 tempfile tfile0 
+ 30.                 save `tfile0'
+ 31.                 clear
+ 32.                 forvalues i = 1(1)`dsets' {
+ 33.                         tempfile tfile
+ 34.                         preserve
+ 35.                         * bootstrap from original data
+.                         use `tfile0', clear 
+ 36.                         bsample `obs'
+ 37.                         save `tfile'
+ 38.                         restore
+ 39.                         * append
+.                         append using `tfile' 
+ 40.                 }       
+ 41.         }
+ 42. 
+.         *** DGP
+.         gen double nu = rnormal(0,`kappa1')
+ 43.         gen byte d_b = ((hhat+nu)>0.5)
+ 44. 
+.         gen double e = rnormal(0,`kappa2')
+ 45.         gen double y_b = (`tau')*d_b + ghat + e 
+ 46.         
+.         *** create poly up to 10, w/o interactions
+.         foreach var of varlist $Xcont {
+ 47.                 forvalues i = 2(1)10 {
+ 48.                         gen double poly10_`var'`i'=(`var')^(`i')
+ 49.                 }       
+ 50.         }
+ 51. 
+.         *** ddml partial ****************************************************
+> *******
+.                         
+.         timer on 1
+ 52.         ddml init partial, kfolds(`folds')  
+ 53.         ddml E[Y|X], l(Y0_py): pystacked y_b $X, ///
+>                                                 method(ols lassocv ridgecv la
+> ssocv ridgecv rf rf gradboost gradboost nnet) ///
+>                                                 xvars2($xvar_poly2) ///
+>                                                 xvars3($xvar_poly2) ///
+>                                                 xvars4($xvar_poly10)  ///
+>                                                 xvars5($xvar_poly10) ///
+>                                                 pipe6(sparse) cmdopt6($rflow)
+>  ///
+>                                                 pipe7(sparse) cmdopt7($rfhigh
+> ) ///
+>                                                 pipe8(sparse) cmdopt8($gradlo
+> w) ///
+>                                                 pipe9(sparse) cmdopt9($gradhi
+> gh) ///
+>                                                 cmdopt10($nnetopt) pipe10(std
+> scaler) ///
+>                                                 $pyopt 
+ 54.         ddml E[D|X], l(D0_py): pystacked d_b $X, ///
+>                                                 method(ols lassocv ridgecv la
+> ssocv ridgecv rf rf gradboost gradboost nnet) ///
+>                                                 xvars2($xvar_poly2) ///
+>                                                 xvars3($xvar_poly2) ///
+>                                                 xvars4($xvar_poly10)  ///
+>                                                 xvars5($xvar_poly10) ///
+>                                                 pipe6(sparse) cmdopt6($rflow)
+>  ///
+>                                                 pipe7(sparse) cmdopt7($rfhigh
+> ) ///
+>                                                 pipe8(sparse) cmdopt8($gradlo
+> w) ///
+>                                                 pipe9(sparse) cmdopt9($gradhi
+> gh) ///
+>                                                 cmdopt10($nnetopt) pipe10(std
+> scaler) ///
+>                                                 $pyopt 
+ 55.         ddml crossfit, shortstack poolstack
+ 56.         ddml estimate, robust
+ 57.         timer off 1
+ 58.                 
+.         local nlearners = 10
+ 59.         
+.         foreach final in nnls1 singlebest ols avg {
+ 60. 
+.                 ddml estimate, robust finalest(`final')
+ 61.         
+.                         // regular stacking results
+.                         ddml estimate, mname(m0) spec(st) replay  
+ 62.                         local ddml_st_`final'_b = _b[d_b]
+ 63.                         local ddml_st_`final'_se = _se[d_b]
+ 64.                         // shortstacking results
+.                         ddml estimate, mname(m0) spec(ss) replay 
+ 65.                         local ddml_ss_`final'_b = _b[d_b]
+ 66.                         local ddml_ss_`final'_se = _se[d_b]     
+ 67.                         // poolstacking results
+.                         ddml estimate, mname(m0) spec(ps) replay  
+ 68.                         local ddml_ps_`final'_b = _b[d_b]
+ 69.                         local ddml_ps_`final'_se = _se[d_b]     
+ 70.                 
+.                         tempname By Bd
+ 71.                         // pystacked weights
+.                         ddml extract, show(stweights)
+ 72.                         mat `By'=r(Y0_py_w_mn)
+ 73.                         mat `Bd'=r(D0_py_w_mn)
+ 74.                         mat list `Bd'
+ 75.                         mat list `By'
+ 76.                         forvalues i = 1(1)`nlearners' {
+ 77.                                 local stw_`final'_d`i' = el(`Bd',`i',2)
+ 78.                                 local stw_`final'_y`i' = el(`By',`i',2)
+ 79.                         }
+ 80.                         // shortstacked weights
+.                         ddml extract, show(ssweights)
+ 81.                         mat `By'=r(Y_y_b_ss)
+ 82.                         mat `Bd'=r(D_d_b_ss)
+ 83.                         mat list `Bd'
+ 84.                         mat list `By'
+ 85.                         forvalues i = 1(1)`nlearners' {
+ 86.                                 local ssw_`final'_d`i' = el(`Bd',`i',2)
+ 87.                                 local ssw_`final'_y`i' = el(`By',`i',2)
+ 88.                         }
+ 89.                         // poolstacked weights
+.                         ddml extract, show(psweights)
+ 90.                         mat `By'=r(Y_y_b_ps)
+ 91.                         mat `Bd'=r(D_d_b_ps)
+ 92.                         mat list `Bd'
+ 93.                         mat list `By'
+ 94.                         forvalues i = 1(1)`nlearners' {
+ 95.                                 local psw_`final'_d`i' = el(`Bd',`i',2)
+ 96.                                 local psw_`final'_y`i' = el(`By',`i',2)
+ 97.                         }
+ 98. 
+.         }
+ 99.         
+.         
+.         *** get candidate-learner-specific betas
+.         forvalues i = 1(1)`nlearners' {
+100.                 cap drop ytil
+101.                 cap drop dtil
+102.                 gen double ytil = y_b - Y0_py_L`i'_
+103.                 gen double dtil = d_b - D0_py_L`i'_
+104.                 reg ytil dtil, robust
+105.                 local ddml_`i'_b = _b[dtil]
+106.                 local ddml_`i'_se = _se[dtil]
+107.         }
+108.         
+.         *** get mspe
+.         forvalues i = 1(1)`nlearners' {
+109.                 cap drop Drsq
+110.                 gen Drsq=(d_b - D0_py_L`i'_)^2 
+111.                 sum Drsq , meanonly 
+112.                 local mspe_d`i'=r(mean)
+113.                 cap drop Yrsq
+114.                 gen Yrsq=(y_b - Y0_py_L`i'_)^2 
+115.                 sum Yrsq , meanonly 
+116.                 local mspe_y`i'=r(mean)
+117.         }
+118.         ddml drop
+119.                         
+.         * partial ddml with short-stacking **********************************
+> *******
+.         * we only need this for timing, so let this run only once a while ***
+> *******
+.         if ((runiform()<0.05) | (`folds'==5)) {
+120.                 timer on 3
+121.                 ddml init partial, kfolds(`folds')  
+122.                 ddml E[Y|X]: reg y_b $X 
+123.                 ddml E[Y|X]: pystacked y_b $X, method(lassocv)  xvars1($xv
+> ar_poly2) 
+124.                 ddml E[Y|X]: pystacked y_b $X, method(ridgecv)  xvars1($xv
+> ar_poly2)
+125.                 ddml E[Y|X]: pystacked y_b $X, method(lassocv)  xvars1($xv
+> ar_poly10)  
+126.                 ddml E[Y|X]: pystacked y_b $X, method(ridgecv)  xvars1($xv
+> ar_poly10) 
+127.                 ddml E[Y|X]: pystacked y_b $X, method(rf) pipe1(sparse) cm
+> dopt1($rflow) 
+128.                 ddml E[Y|X]: pystacked y_b $X, method(rf) pipe1(sparse) cm
+> dopt1($rfhigh) 
+129.                 ddml E[Y|X]: pystacked y_b $X, method(gradboost) pipe1(spa
+> rse) cmdopt1($gradlow) 
+130.                 ddml E[Y|X]: pystacked y_b $X, method(gradboost) pipe1(spa
+> rse) cmdopt1($gradhigh) 
+131.                 ddml E[Y|X]: pystacked y_b $X, method(nnet) cmdopt1($nneto
+> pt) pipe1(stdscaler)
+132.                 ddml E[D|X]: reg d_b $X  
+133.                 ddml E[D|X]: pystacked d_b $X, method(lassocv)  xvars1($xv
+> ar_poly2) 
+134.                 ddml E[D|X]: pystacked d_b $X, method(ridgecv)  xvars1($xv
+> ar_poly2) 
+135.                 ddml E[D|X]: pystacked d_b $X, method(lassocv)  xvars1($xv
+> ar_poly10) 
+136.                 ddml E[D|X]: pystacked d_b $X, method(ridgecv)  xvars1($xv
+> ar_poly10) 
+137.                 ddml E[D|X]: pystacked d_b $X, method(rf) pipe1(sparse) cm
+> dopt1($rflow) 
+138.                 ddml E[D|X]: pystacked d_b $X, method(rf) pipe1(sparse) cm
+> dopt1($rfhigh) 
+139.                 ddml E[D|X]: pystacked d_b $X, method(gradboost) pipe1(spa
+> rse) cmdopt1($gradlow) 
+140.                 ddml E[D|X]: pystacked d_b $X, method(gradboost) pipe1(spa
+> rse) cmdopt1($gradhigh) 
+141.                 ddml E[D|X]: pystacked d_b $X, method(nnet) cmdopt1($nneto
+> pt) pipe1(stdscaler)
+142.                 ddml crossfit, shortstack nostdstack
+143.                 ddml estimate, robust allcombos
+144.                 timer off 3
+145.         }
+146. 
+. 
+.         * full sample estimators ********************************************
+> *******
+. 
+.         timer on 4
+147.         pdslasso y_b d_b ($X), robust
+148.         timer off 4
+149.         local pds_b = _b[d_b]
+150.         local pds_se = _se[d_b]
+151.         
+.         timer on 5
+152.         local ols_b = .
+153.         local ols_se = .
+154.         cap reg y_b d_b $X,  robust
+155.         timer off 5
+156.         if _rc==0 {
+157.                 local ols_b = _b[d_b]
+158.                 local ols_se = _se[d_b]
+159.         }
+160.         
+.         *** misc ************************************************************
+> *******    
+.         
+.         *** sd
+.         foreach var of varlist $Y $D y_b d_b {
+161.                 sum `var'
+162.                 local sd_`var' = r(sd)
+163.         }
+164.         
+.         * timer 
+.         timer list
+165.         foreach i of numlist 1 3 4 5 {
+166.                 local t`i'=r(t`i')
+167.                 local tn`i'=r(nt`i')
+168.         }
+169.         
+.         *** return **********************************************************
+> *******
+.         ereturn clear
+170.         * timer
+.         foreach i of numlist 1 3 4 5 {
+171.                 return scalar t`i'=`t`i''
+172.                 return scalar tn`i'=`tn`i''
+173.         }
+174.         * coefficients per final learner
+.         foreach final in nnls1 singlebest ols avg {
+175.                 foreach v in st ss ps {
+176.                         return scalar ddml_`v'_`final'_b = `ddml_`v'_`fina
+> l'_b'
+177.                         return scalar ddml_`v'_`final'_se = `ddml_`v'_`fin
+> al'_se'
+178.                 }
+179.         }
+180.         * stacking weights per final learner
+.         foreach final in nnls1 singlebest ols avg {
+181.                 foreach type in stw ssw psw {
+182.                         forvalues i = 1(1)`nlearners' {
+183.                                 return scalar `type'_`final'_d`i' = ``type
+> '_`final'_d`i'' 
+184.                                 return scalar `type'_`final'_y`i' = ``type
+> '_`final'_y`i''
+185.                         }
+186.                 }
+187.         }
+188.         * coefficients from alternative short-stacking estimation
+.         foreach v in 1 2 3 4 5 6 7 8 9 10 {
+189.                 return scalar ddml_`v'_b = `ddml_`v'_b'
+190.                 return scalar ddml_`v'_se = `ddml_`v'_se'
+191.         }
+192.         * full sample estimates
+.         foreach v in ols pds {
+193.                 return scalar `v'_b = ``v'_b'
+194.                 return scalar `v'_se = ``v'_se'
+195.         }
+196.         * sd of vars
+.         foreach var of varlist $Y $D y_b d_b {
+197.                 return scalar sd_`var' = `sd_`var''
+198.         }
+199.         * mspe
+.         forvalues i = 1(1)`nlearners' {
+200.                 return scalar mspe_d`i' = `mspe_d`i''  
+201.                 return scalar mspe_y`i' = `mspe_y`i''  
+202.         }       
+203.         ***** settings
+.         return scalar kappa1 = `kappa1'
+204.         return scalar kappa2 = `kappa2'
+205.         return scalar tau = `tau'
+206.         return scalar obs = `obs'
+207.         return scalar dgpflag = `dgpflag'
+208.         return scalar dsets = `dsets'
+209.         return scalar folds = `folds'
+210. end
+
+. 
+. timer clear
+
+. forvalues i = 1(1)$reps {
+  2.         clear
+  3.         cap confirm file out`folder'/out_`1'_`2'_`3'_`4'_`5'_`i'.dta 
+  4.         if _rc {
+  5.                 simulate, reps($each_reps): mysim, obs(`2') dgp(`3') dsets
+> (`4') folds(`5')
+  6.                 gen seed = `1'
+  7.                 save out`folder'/out_`1'_`2'_`3'_`4'_`5'_`i'.dta, replace
+  8.         }
+  9.         cap rm "error.txt"
+ 10.         cap rm "output.txt"
+ 11. }
+
+         command:  mysim, obs(1600) dgp(ols) dsets(1) folds(2)
+           folds:  r(folds)
+           dsets:  r(dsets)
+         dgpflag:  r(dgpflag)
+             obs:  r(obs)
+             tau:  r(tau)
+          kappa2:  r(kappa2)
+          kappa1:  r(kappa1)
+        mspe_y10:  r(mspe_y10)
+        mspe_d10:  r(mspe_d10)
+         mspe_y9:  r(mspe_y9)
+         mspe_d9:  r(mspe_d9)
+         mspe_y8:  r(mspe_y8)
+         mspe_d8:  r(mspe_d8)
+         mspe_y7:  r(mspe_y7)
+         mspe_d7:  r(mspe_d7)
+         mspe_y6:  r(mspe_y6)
+         mspe_d6:  r(mspe_d6)
+         mspe_y5:  r(mspe_y5)
+         mspe_d5:  r(mspe_d5)
+         mspe_y4:  r(mspe_y4)
+         mspe_d4:  r(mspe_d4)
+         mspe_y3:  r(mspe_y3)
+         mspe_d3:  r(mspe_d3)
+         mspe_y2:  r(mspe_y2)
+         mspe_d2:  r(mspe_d2)
+         mspe_y1:  r(mspe_y1)
+         mspe_d1:  r(mspe_d1)
+          sd_d_b:  r(sd_d_b)
+          sd_y_b:  r(sd_y_b)
+         sd_e401:  r(sd_e401)
+      sd_net_tfa:  r(sd_net_tfa)
+          pds_se:  r(pds_se)
+           pds_b:  r(pds_b)
+          ols_se:  r(ols_se)
+           ols_b:  r(ols_b)
+      ddml_10_se:  r(ddml_10_se)
+       ddml_10_b:  r(ddml_10_b)
+       ddml_9_se:  r(ddml_9_se)
+        ddml_9_b:  r(ddml_9_b)
+       ddml_8_se:  r(ddml_8_se)
+        ddml_8_b:  r(ddml_8_b)
+       ddml_7_se:  r(ddml_7_se)
+        ddml_7_b:  r(ddml_7_b)
+       ddml_6_se:  r(ddml_6_se)
+        ddml_6_b:  r(ddml_6_b)
+       ddml_5_se:  r(ddml_5_se)
+        ddml_5_b:  r(ddml_5_b)
+       ddml_4_se:  r(ddml_4_se)
+        ddml_4_b:  r(ddml_4_b)
+       ddml_3_se:  r(ddml_3_se)
+        ddml_3_b:  r(ddml_3_b)
+       ddml_2_se:  r(ddml_2_se)
+        ddml_2_b:  r(ddml_2_b)
+       ddml_1_se:  r(ddml_1_se)
+        ddml_1_b:  r(ddml_1_b)
+     psw_avg_y10:  r(psw_avg_y10)
+     psw_avg_d10:  r(psw_avg_d10)
+      psw_avg_y9:  r(psw_avg_y9)
+      psw_avg_d9:  r(psw_avg_d9)
+      psw_avg_y8:  r(psw_avg_y8)
+      psw_avg_d8:  r(psw_avg_d8)
+      psw_avg_y7:  r(psw_avg_y7)
+      psw_avg_d7:  r(psw_avg_d7)
+      psw_avg_y6:  r(psw_avg_y6)
+      psw_avg_d6:  r(psw_avg_d6)
+      psw_avg_y5:  r(psw_avg_y5)
+      psw_avg_d5:  r(psw_avg_d5)
+      psw_avg_y4:  r(psw_avg_y4)
+      psw_avg_d4:  r(psw_avg_d4)
+      psw_avg_y3:  r(psw_avg_y3)
+      psw_avg_d3:  r(psw_avg_d3)
+      psw_avg_y2:  r(psw_avg_y2)
+      psw_avg_d2:  r(psw_avg_d2)
+      psw_avg_y1:  r(psw_avg_y1)
+      psw_avg_d1:  r(psw_avg_d1)
+     ssw_avg_y10:  r(ssw_avg_y10)
+     ssw_avg_d10:  r(ssw_avg_d10)
+      ssw_avg_y9:  r(ssw_avg_y9)
+      ssw_avg_d9:  r(ssw_avg_d9)
+      ssw_avg_y8:  r(ssw_avg_y8)
+      ssw_avg_d8:  r(ssw_avg_d8)
+      ssw_avg_y7:  r(ssw_avg_y7)
+      ssw_avg_d7:  r(ssw_avg_d7)
+      ssw_avg_y6:  r(ssw_avg_y6)
+      ssw_avg_d6:  r(ssw_avg_d6)
+      ssw_avg_y5:  r(ssw_avg_y5)
+      ssw_avg_d5:  r(ssw_avg_d5)
+      ssw_avg_y4:  r(ssw_avg_y4)
+      ssw_avg_d4:  r(ssw_avg_d4)
+      ssw_avg_y3:  r(ssw_avg_y3)
+      ssw_avg_d3:  r(ssw_avg_d3)
+      ssw_avg_y2:  r(ssw_avg_y2)
+      ssw_avg_d2:  r(ssw_avg_d2)
+      ssw_avg_y1:  r(ssw_avg_y1)
+      ssw_avg_d1:  r(ssw_avg_d1)
+     stw_avg_y10:  r(stw_avg_y10)
+     stw_avg_d10:  r(stw_avg_d10)
+      stw_avg_y9:  r(stw_avg_y9)
+      stw_avg_d9:  r(stw_avg_d9)
+      stw_avg_y8:  r(stw_avg_y8)
+      stw_avg_d8:  r(stw_avg_d8)
+      stw_avg_y7:  r(stw_avg_y7)
+      stw_avg_d7:  r(stw_avg_d7)
+      stw_avg_y6:  r(stw_avg_y6)
+      stw_avg_d6:  r(stw_avg_d6)
+      stw_avg_y5:  r(stw_avg_y5)
+      stw_avg_d5:  r(stw_avg_d5)
+      stw_avg_y4:  r(stw_avg_y4)
+      stw_avg_d4:  r(stw_avg_d4)
+      stw_avg_y3:  r(stw_avg_y3)
+      stw_avg_d3:  r(stw_avg_d3)
+      stw_avg_y2:  r(stw_avg_y2)
+      stw_avg_d2:  r(stw_avg_d2)
+      stw_avg_y1:  r(stw_avg_y1)
+      stw_avg_d1:  r(stw_avg_d1)
+     psw_ols_y10:  r(psw_ols_y10)
+     psw_ols_d10:  r(psw_ols_d10)
+      psw_ols_y9:  r(psw_ols_y9)
+      psw_ols_d9:  r(psw_ols_d9)
+      psw_ols_y8:  r(psw_ols_y8)
+      psw_ols_d8:  r(psw_ols_d8)
+      psw_ols_y7:  r(psw_ols_y7)
+      psw_ols_d7:  r(psw_ols_d7)
+      psw_ols_y6:  r(psw_ols_y6)
+      psw_ols_d6:  r(psw_ols_d6)
+      psw_ols_y5:  r(psw_ols_y5)
+      psw_ols_d5:  r(psw_ols_d5)
+      psw_ols_y4:  r(psw_ols_y4)
+      psw_ols_d4:  r(psw_ols_d4)
+      psw_ols_y3:  r(psw_ols_y3)
+      psw_ols_d3:  r(psw_ols_d3)
+      psw_ols_y2:  r(psw_ols_y2)
+      psw_ols_d2:  r(psw_ols_d2)
+      psw_ols_y1:  r(psw_ols_y1)
+      psw_ols_d1:  r(psw_ols_d1)
+     ssw_ols_y10:  r(ssw_ols_y10)
+     ssw_ols_d10:  r(ssw_ols_d10)
+      ssw_ols_y9:  r(ssw_ols_y9)
+      ssw_ols_d9:  r(ssw_ols_d9)
+      ssw_ols_y8:  r(ssw_ols_y8)
+      ssw_ols_d8:  r(ssw_ols_d8)
+      ssw_ols_y7:  r(ssw_ols_y7)
+      ssw_ols_d7:  r(ssw_ols_d7)
+      ssw_ols_y6:  r(ssw_ols_y6)
+      ssw_ols_d6:  r(ssw_ols_d6)
+      ssw_ols_y5:  r(ssw_ols_y5)
+      ssw_ols_d5:  r(ssw_ols_d5)
+      ssw_ols_y4:  r(ssw_ols_y4)
+      ssw_ols_d4:  r(ssw_ols_d4)
+      ssw_ols_y3:  r(ssw_ols_y3)
+      ssw_ols_d3:  r(ssw_ols_d3)
+      ssw_ols_y2:  r(ssw_ols_y2)
+      ssw_ols_d2:  r(ssw_ols_d2)
+      ssw_ols_y1:  r(ssw_ols_y1)
+      ssw_ols_d1:  r(ssw_ols_d1)
+     stw_ols_y10:  r(stw_ols_y10)
+     stw_ols_d10:  r(stw_ols_d10)
+      stw_ols_y9:  r(stw_ols_y9)
+      stw_ols_d9:  r(stw_ols_d9)
+      stw_ols_y8:  r(stw_ols_y8)
+      stw_ols_d8:  r(stw_ols_d8)
+      stw_ols_y7:  r(stw_ols_y7)
+      stw_ols_d7:  r(stw_ols_d7)
+      stw_ols_y6:  r(stw_ols_y6)
+      stw_ols_d6:  r(stw_ols_d6)
+      stw_ols_y5:  r(stw_ols_y5)
+      stw_ols_d5:  r(stw_ols_d5)
+      stw_ols_y4:  r(stw_ols_y4)
+      stw_ols_d4:  r(stw_ols_d4)
+      stw_ols_y3:  r(stw_ols_y3)
+      stw_ols_d3:  r(stw_ols_d3)
+      stw_ols_y2:  r(stw_ols_y2)
+      stw_ols_d2:  r(stw_ols_d2)
+      stw_ols_y1:  r(stw_ols_y1)
+      stw_ols_d1:  r(stw_ols_d1)
+psw_singlebes~10:  r(psw_singlebest_y10)
+psw_singlebes~10:  r(psw_singlebest_d10)
+psw_singlebest~9:  r(psw_singlebest_y9)
+psw_singlebest~9:  r(psw_singlebest_d9)
+psw_singlebest~8:  r(psw_singlebest_y8)
+psw_singlebest~8:  r(psw_singlebest_d8)
+psw_singlebest~7:  r(psw_singlebest_y7)
+psw_singlebest~7:  r(psw_singlebest_d7)
+psw_singlebest~6:  r(psw_singlebest_y6)
+psw_singlebest~6:  r(psw_singlebest_d6)
+psw_singlebest~5:  r(psw_singlebest_y5)
+psw_singlebest~5:  r(psw_singlebest_d5)
+psw_singlebest~4:  r(psw_singlebest_y4)
+psw_singlebest~4:  r(psw_singlebest_d4)
+psw_singlebest~3:  r(psw_singlebest_y3)
+psw_singlebest~3:  r(psw_singlebest_d3)
+psw_singlebest~2:  r(psw_singlebest_y2)
+psw_singlebest~2:  r(psw_singlebest_d2)
+psw_singlebest~1:  r(psw_singlebest_y1)
+psw_singlebest~1:  r(psw_singlebest_d1)
+ssw_singlebes~10:  r(ssw_singlebest_y10)
+ssw_singlebes~10:  r(ssw_singlebest_d10)
+ssw_singlebest~9:  r(ssw_singlebest_y9)
+ssw_singlebest~9:  r(ssw_singlebest_d9)
+ssw_singlebest~8:  r(ssw_singlebest_y8)
+ssw_singlebest~8:  r(ssw_singlebest_d8)
+ssw_singlebest~7:  r(ssw_singlebest_y7)
+ssw_singlebest~7:  r(ssw_singlebest_d7)
+ssw_singlebest~6:  r(ssw_singlebest_y6)
+ssw_singlebest~6:  r(ssw_singlebest_d6)
+ssw_singlebest~5:  r(ssw_singlebest_y5)
+ssw_singlebest~5:  r(ssw_singlebest_d5)
+ssw_singlebest~4:  r(ssw_singlebest_y4)
+ssw_singlebest~4:  r(ssw_singlebest_d4)
+ssw_singlebest~3:  r(ssw_singlebest_y3)
+ssw_singlebest~3:  r(ssw_singlebest_d3)
+ssw_singlebest~2:  r(ssw_singlebest_y2)
+ssw_singlebest~2:  r(ssw_singlebest_d2)
+ssw_singlebest~1:  r(ssw_singlebest_y1)
+ssw_singlebest~1:  r(ssw_singlebest_d1)
+stw_singlebes~10:  r(stw_singlebest_y10)
+stw_singlebes~10:  r(stw_singlebest_d10)
+stw_singlebest~9:  r(stw_singlebest_y9)
+stw_singlebest~9:  r(stw_singlebest_d9)
+stw_singlebest~8:  r(stw_singlebest_y8)
+stw_singlebest~8:  r(stw_singlebest_d8)
+stw_singlebest~7:  r(stw_singlebest_y7)
+stw_singlebest~7:  r(stw_singlebest_d7)
+stw_singlebest~6:  r(stw_singlebest_y6)
+stw_singlebest~6:  r(stw_singlebest_d6)
+stw_singlebest~5:  r(stw_singlebest_y5)
+stw_singlebest~5:  r(stw_singlebest_d5)
+stw_singlebest~4:  r(stw_singlebest_y4)
+stw_singlebest~4:  r(stw_singlebest_d4)
+stw_singlebest~3:  r(stw_singlebest_y3)
+stw_singlebest~3:  r(stw_singlebest_d3)
+stw_singlebest~2:  r(stw_singlebest_y2)
+stw_singlebest~2:  r(stw_singlebest_d2)
+stw_singlebest~1:  r(stw_singlebest_y1)
+stw_singlebest~1:  r(stw_singlebest_d1)
+   psw_nnls1_y10:  r(psw_nnls1_y10)
+   psw_nnls1_d10:  r(psw_nnls1_d10)
+    psw_nnls1_y9:  r(psw_nnls1_y9)
+    psw_nnls1_d9:  r(psw_nnls1_d9)
+    psw_nnls1_y8:  r(psw_nnls1_y8)
+    psw_nnls1_d8:  r(psw_nnls1_d8)
+    psw_nnls1_y7:  r(psw_nnls1_y7)
+    psw_nnls1_d7:  r(psw_nnls1_d7)
+    psw_nnls1_y6:  r(psw_nnls1_y6)
+    psw_nnls1_d6:  r(psw_nnls1_d6)
+    psw_nnls1_y5:  r(psw_nnls1_y5)
+    psw_nnls1_d5:  r(psw_nnls1_d5)
+    psw_nnls1_y4:  r(psw_nnls1_y4)
+    psw_nnls1_d4:  r(psw_nnls1_d4)
+    psw_nnls1_y3:  r(psw_nnls1_y3)
+    psw_nnls1_d3:  r(psw_nnls1_d3)
+    psw_nnls1_y2:  r(psw_nnls1_y2)
+    psw_nnls1_d2:  r(psw_nnls1_d2)
+    psw_nnls1_y1:  r(psw_nnls1_y1)
+    psw_nnls1_d1:  r(psw_nnls1_d1)
+   ssw_nnls1_y10:  r(ssw_nnls1_y10)
+   ssw_nnls1_d10:  r(ssw_nnls1_d10)
+    ssw_nnls1_y9:  r(ssw_nnls1_y9)
+    ssw_nnls1_d9:  r(ssw_nnls1_d9)
+    ssw_nnls1_y8:  r(ssw_nnls1_y8)
+    ssw_nnls1_d8:  r(ssw_nnls1_d8)
+    ssw_nnls1_y7:  r(ssw_nnls1_y7)
+    ssw_nnls1_d7:  r(ssw_nnls1_d7)
+    ssw_nnls1_y6:  r(ssw_nnls1_y6)
+    ssw_nnls1_d6:  r(ssw_nnls1_d6)
+    ssw_nnls1_y5:  r(ssw_nnls1_y5)
+    ssw_nnls1_d5:  r(ssw_nnls1_d5)
+    ssw_nnls1_y4:  r(ssw_nnls1_y4)
+    ssw_nnls1_d4:  r(ssw_nnls1_d4)
+    ssw_nnls1_y3:  r(ssw_nnls1_y3)
+    ssw_nnls1_d3:  r(ssw_nnls1_d3)
+    ssw_nnls1_y2:  r(ssw_nnls1_y2)
+    ssw_nnls1_d2:  r(ssw_nnls1_d2)
+    ssw_nnls1_y1:  r(ssw_nnls1_y1)
+    ssw_nnls1_d1:  r(ssw_nnls1_d1)
+   stw_nnls1_y10:  r(stw_nnls1_y10)
+   stw_nnls1_d10:  r(stw_nnls1_d10)
+    stw_nnls1_y9:  r(stw_nnls1_y9)
+    stw_nnls1_d9:  r(stw_nnls1_d9)
+    stw_nnls1_y8:  r(stw_nnls1_y8)
+    stw_nnls1_d8:  r(stw_nnls1_d8)
+    stw_nnls1_y7:  r(stw_nnls1_y7)
+    stw_nnls1_d7:  r(stw_nnls1_d7)
+    stw_nnls1_y6:  r(stw_nnls1_y6)
+    stw_nnls1_d6:  r(stw_nnls1_d6)
+    stw_nnls1_y5:  r(stw_nnls1_y5)
+    stw_nnls1_d5:  r(stw_nnls1_d5)
+    stw_nnls1_y4:  r(stw_nnls1_y4)
+    stw_nnls1_d4:  r(stw_nnls1_d4)
+    stw_nnls1_y3:  r(stw_nnls1_y3)
+    stw_nnls1_d3:  r(stw_nnls1_d3)
+    stw_nnls1_y2:  r(stw_nnls1_y2)
+    stw_nnls1_d2:  r(stw_nnls1_d2)
+    stw_nnls1_y1:  r(stw_nnls1_y1)
+    stw_nnls1_d1:  r(stw_nnls1_d1)
+  ddml_ps_avg_se:  r(ddml_ps_avg_se)
+   ddml_ps_avg_b:  r(ddml_ps_avg_b)
+  ddml_ss_avg_se:  r(ddml_ss_avg_se)
+   ddml_ss_avg_b:  r(ddml_ss_avg_b)
+  ddml_st_avg_se:  r(ddml_st_avg_se)
+   ddml_st_avg_b:  r(ddml_st_avg_b)
+  ddml_ps_ols_se:  r(ddml_ps_ols_se)
+   ddml_ps_ols_b:  r(ddml_ps_ols_b)
+  ddml_ss_ols_se:  r(ddml_ss_ols_se)
+   ddml_ss_ols_b:  r(ddml_ss_ols_b)
+  ddml_st_ols_se:  r(ddml_st_ols_se)
+   ddml_st_ols_b:  r(ddml_st_ols_b)
+ddml_ps_single~e:  r(ddml_ps_singlebest_se)
+ddml_ps_single~b:  r(ddml_ps_singlebest_b)
+ddml_ss_single~e:  r(ddml_ss_singlebest_se)
+ddml_ss_single~b:  r(ddml_ss_singlebest_b)
+ddml_st_single~e:  r(ddml_st_singlebest_se)
+ddml_st_single~b:  r(ddml_st_singlebest_b)
+ddml_ps_nnls1_se:  r(ddml_ps_nnls1_se)
+ ddml_ps_nnls1_b:  r(ddml_ps_nnls1_b)
+ddml_ss_nnls1_se:  r(ddml_ss_nnls1_se)
+ ddml_ss_nnls1_b:  r(ddml_ss_nnls1_b)
+ddml_st_nnls1_se:  r(ddml_st_nnls1_se)
+ ddml_st_nnls1_b:  r(ddml_st_nnls1_b)
+             tn5:  r(tn5)
+              t5:  r(t5)
+             tn4:  r(tn4)
+              t4:  r(t4)
+             tn3:  r(tn3)
+              t3:  r(t3)
+             tn1:  r(tn1)
+              t1:  r(t1)
+
+Simulations (100)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+.xxxx.............................................    50
+..................................................   100
+(note: file outsmall/out_398490_1600_ols_1_2_1.dta not found)
+file outsmall/out_398490_1600_ols_1_2_1.dta saved
+
+. timer list
+   1:   2780.01 /      100 =      27.8001
+   3:     44.02 /        6 =       7.3370
+   4:      5.35 /      100 =       0.0535
+   5:      0.57 /      100 =       0.0057
+
+. 
+. cap log close

@@ -1,0 +1,2924 @@
+-------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /cluster/home/kahrens/ddml_applied/GWG/Output/GWG_3702_1.txt
+  log type:  text
+ opened on:  10 Dec 2023, 19:14:52
+
+. 
+. which ddml
+/cluster/home/kahrens/ado/plus/d/ddml.ado
+*! ddml v1.4.3
+*! last edited: 17aug2023
+*! authors: aa/ms
+
+. which pystacked
+/cluster/home/kahrens/ado/plus/p/pystacked.ado
+*! pystacked v0.7.5
+*! last edited: 7aug2023
+*! authors: aa/ms
+
+. 
+. set seed `seed'
+
+. local folder out_`seed'
+
+. 
+. use "../Data/gender_gap_ML_processed", clear
+
+. 
+. cap mkdir `folder'
+
+. 
+. *****************************************************************************
+> ***
+. ***  controls
+. *****************************************************************************
+> ***
+. 
+. // create squared age and tenure here
+. gen age_r2 = age_r^2
+
+. gen tenure2 = tenure^2
+(2 missing values generated)
+
+. 
+. // no base categories
+. global continuous                                                            
+>                                                            ///
+>         age_r                                                                
+>                                                                    /// no mis
+> sing
+>         yrsqual         /* years of education (derived) */                   
+>                                    /// 355 missing
+>         /// leavedu             /* age when left education (derived) */      
+>                            /// 1,081 missing
+>         pvlit1          /* literacy score: plausible value 1 (also 2-10 avail
+> ) */       /// no missing
+>         pvnum1          /* numeracy score: plausible value 1 (also 2-10 avail
+> ) */       /// no missing
+>         tenure          /* tenure = years in work for current employer */    
+>                    /// 2 missing
+>                                                                              
+>                                                                            //
+
+. // add second order terms here
+. global continuous $continuous age_r2 tenure2
+
+. 
+. global discrete0                                                             
+>                                                            ///             
+>         b_q01a          /* education, highest level attained */              
+>                            /// no missing
+>         b_q01b          /* area of study */                                  
+>                                                    /// 434 missing
+>         d_q06c          /* part of a larger organization */                  
+>                                    /// 13 missing
+>         d_q08a          /* management position */                            
+>                                            /// no missing
+>         d_q09           /* type of contract */                               
+>                                            /// 12 missing
+>         d_q10_t1        /* hours per week at this job or business */         
+>                    /// 1 missing
+>         d_q14           /* job satisfaction */                               
+>                                            /// 1 missing
+>         i_q08           /* health status */                                  
+>                                                    /// 2 missing
+>         j_q02a          /* living with a partner */                          
+>                                            /// 899 missing
+>         j_q03d1_c       /* age of youngest child */                          
+>                                            /// 2,718 missing
+>         j_q04c1_c       /* immigration: age */                               
+>                                            /// 4,375 missing
+>         j_q06b          /* mother's highest level of educ */                 
+>                            /// 445 missing
+>         j_q07b          /* father's highest level of educ */                 
+>                            /// 515 missing
+>         j_q03b          /* number of children*/                              
+>                                            /// 1,856 missing
+>         impar           /* immigration: parents */                           
+>                                            /// 21 missing
+>         imgen           /* immigration: generation */                        
+>                                    /// 344 missing
+>         nfe12jr         /* informal job-related educ in prev 12 months */    
+>                    /// 116 missing
+>         nfe12njr        /* informal non-job-related educ in prev 12 months */
+>            /// 116 missing
+>                                                                              
+>                                                                            //
+>                                                                              
+>                                                          
+
+. global personality                                                           
+>                                                            ///
+>         i_q04b          /* Learning strategies, Relate new ideas into real li
+> fe */      /// 16 missing
+>         i_q04d          /* Learning strategies, Like learning new things */  
+>                    /// no missing
+>         i_q04h          /* Learning strategies, Attribute something new */   
+>                    /// 10 missing
+>         i_q04j          /* Learning strategies, Deal with difficult things */
+>            /// no missing
+>         i_q04l          /* Learning strategies, Fit different ideas together 
+> */         /// 5 missing
+>         i_q04m          /* Learning strategies, Looking for additional info *
+> /          /// 1 missing
+>         i_q05f          /* Cultural engagement, Voluntary non-profit work */ 
+>            /// no missing
+>         i_q06a          /* Political efficacy, No influence on the government
+>  */        /// 14 missing
+>         i_q07a          /* Social trust, Trust only few people */            
+>                            /// 4 missing
+>         i_q07b          /* Social trust, Other people take advantage of you *
+> /          /// 6 missing
+>                                                                              
+>                                                                            //
+
+. global discrete $discrete0                                                   
+>                                                    ///
+>         new_reg_tl2     /* geographical region */                            
+>                                            /// 2 missing
+>         new_isco1c      /* occupation */                                     
+>                                                    /// no missing
+>         new_isic1c      /* industry */                                       
+>                                                    // no missing
+
+. 
+. global X_simple                                                         ///
+>         i.(b_q01a d_q10_t1 j_q03b)                              ///
+>         c.($continuous)
+
+. 
+. global X_fullinteracted                                         ///
+>         i.($discrete0 )                                                 ///
+>         i.new_isco1c#i.new_isic1c#i.new_reg_tl2 ///
+>         c.($continuous)                  
+
+.         
+. global X_cont                                                           ///
+>         c.($continuous)##i.($discrete)
+
+. 
+. global X_expanded                                                       ///
+>         i.($discrete)                                                   ///
+>         c.($continuous)                                                 ///
+>         c.age_r#i.($discrete)                                   ///
+>         c.tenure#i.($discrete)
+
+. 
+.         
+. 
+. *****************************************************************************
+> ***
+. ***  estimation sample
+. *****************************************************************************
+> ***
+. 
+. gen byte touse=1
+
+. markout touse lnearn $X_expanded
+
+. keep if touse
+(53 observations deleted)
+
+. 
+. 
+. *****************************************************************************
+> ***
+. ***  learners
+. *****************************************************************************
+> ***
+. 
+. global cores = 5
+
+. 
+. global rf1 min_samples_leaf(1)  max_features(sqrt) n_estimators(500)
+
+. global rf2 min_samples_leaf(50)  max_features(sqrt) n_estimators(500)
+
+. global rf3 min_samples_leaf(100)  max_features(sqrt) n_estimators(500)
+
+. global grad1 n_estimators(500) n_iter_no_change(10)  
+
+. global grad2 n_estimators(500)  
+
+. global nnet1 hidden_layer_sizes(40 20 1 20 50) early_stopping 
+
+. global nnet2 hidden_layer_sizes(30 30 30) early_stopping  
+
+. 
+. global pystring_reg0                                                         
+>    || ///
+>                                         m(ols)                               
+>                            || ///
+>                                         m(ols) xvars($X_simple)              
+>            || ///
+>                                         m(lassocv)                           
+>                            || ///
+>                                         m(ridgecv)                           
+>                            || ///
+>                                         m(lassocv)      xvars($X_cont)       
+>            || ///
+>                                         m(ridgecv)      xvars($X_cont)       
+>            || ///
+>                                         m(rf) opt($rf1)                      
+>                    || ///
+>                                         m(rf) opt($rf2)                      
+>                    || ///
+>                                         m(rf) opt($rf3)                      
+>                    || ///
+>                                         m(gradboost) opt($grad1)             
+>            || ///
+>                                         m(gradboost) opt($grad2)             
+>            || ///
+>                                         m(nnet) opt($nnet1)                  
+>            || ///
+>                                         m(nnet) opt($nnet2)                  
+>            || //
+
+. 
+. global pystring_reg  $pystring_reg0 , type(reg) njobs($cores) 
+
+.  
+. global pystring_class0                                                       
+>            || ///
+>                                         m(logit)                             
+>                            || ///
+>                                         m(logit) xvars($X_simple)            
+>            || ///
+>                                         m(lassocv)                           
+>                            || ///
+>                                         m(ridgecv)                           
+>                            || ///
+>                                         m(lassocv)      xvars($X_cont)       
+>            || ///
+>                                         m(ridgecv)      xvars($X_cont)       
+>            || ///
+>                                         m(rf) opt($rf1)                      
+>                    || ///
+>                                         m(rf) opt($rf2)                      
+>                    || ///
+>                                         m(rf) opt($rf3)                      
+>                    || ///
+>                                         m(gradboost) opt($grad1)             
+>            || ///
+>                                         m(gradboost) opt($grad2)             
+>            || ///
+>                                         m(nnet) opt($nnet1)                  
+>            || ///
+>                                         m(nnet) opt($nnet2)                  
+>            || //                   
+
+.                                 
+. global pystring_class $pystring_class0 , type(class) njobs($cores)
+
+.                                         
+. global R =1  
+
+. global K=10 
+
+. global L =13
+
+.         
+. *****************************************************************************
+> *  
+. *** ddml: estimation                                                         
+>                                               ***
+. *****************************************************************************
+> *
+. 
+. if (`estimator'==1) {
+. 
+.         ddml init partial,  reps($R) kfolds($K)
+.         ddml E[Y|X]: pystacked lnearn $X_expanded $pystring_reg
+Learner Y1_pystacked added successfully.
+.         ddml E[D|X]: pystacked gender_r $X_expanded $pystring_reg
+Learner D1_pystacked added successfully.
+.         ddml crossfit, shortstack poolstack
+Cross-fitting E[y|X] equation: lnearn
+Cross-fitting fold 1 2 3 4 5 6 7 8 9 10 ...completed cross-fitting...completed 
+> short-stacking...completed pooled-stacking
+Cross-fitting E[D|X] equation: gender_r
+Cross-fitting fold 1 2 3 4 5 6 7 8 9 10 ...completed cross-fitting...completed 
+> short-stacking...completed pooled-stacking
+.         ddml estimate, robust
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.099    (0.017)
+  ps  1   [poolstack]          [ps]    -0.099    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0988764   .0165523    -5.97   0.000    -.1313183   -.0664345
+       _cons |  -.0023738   .0062887    -0.38   0.706    -.0146994    .0099518
+------------------------------------------------------------------------------
+Stacking final estimator: nnls1
+
+.         
+.         foreach mat in lnearn_mse gender_r_mse {
+  2.                         ddml extract, show(mse)
+  3.                         mat `mat' = r(`mat')
+  4.                         mat list `mat'
+  5.                                 preserve
+  6.                                 svmat `mat'
+  7.                                 keep `mat'*
+  8.                                 keep if _n<=$L
+  9.                                 gen stack_type = "conventional" if _n==1
+ 10.                                 replace stack_type = "pooled" if _n==2
+ 11.                                 replace stack_type = "short" if _n==3
+ 12.                                 gen model = "plm"
+ 13.                                 list if _n<=$L
+ 14.                                 save `folder'/`mat'_plm_mse, replace
+ 15.                                 restore 
+ 16.         }       
+
+MSEs for gender_r:
+                 rep   full smp      fold 1      fold 2      fold 3      fold 4
+>       fold 5      fold 6      fold 7      fold 8      fold 9     fold 10 
+    D1_pystacked   1      0.156       0.135       0.154       0.174       0.147
+>        0.164       0.161       0.160       0.157       0.149       0.162  
+   D_gender_r_ps   1      0.156       0.135       0.154       0.174       0.147
+>        0.164       0.160       0.160       0.157       0.149       0.162  
+   D_gender_r_ss   1      0.156       0.134       0.155       0.173       0.147
+>        0.164       0.159       0.161       0.156       0.148       0.162  
+
+MSEs for lnearn:
+                 rep   full smp      fold 1      fold 2      fold 3      fold 4
+>       fold 5      fold 6      fold 7      fold 8      fold 9     fold 10 
+    Y1_pystacked   1      0.194       0.150       0.132       0.307       0.137
+>        0.191       0.253       0.199       0.169       0.238       0.162  
+     Y_lnearn_ps   1      0.193       0.149       0.132       0.307       0.137
+>        0.191       0.254       0.198       0.169       0.236       0.161  
+     Y_lnearn_ss   1      0.193       0.150       0.132       0.306       0.136
+>        0.190       0.251       0.197       0.168       0.234       0.161  
+
+lnearn_mse[3,12]
+                      rep  full_sample        fold1        fold2        fold3
+Y1_pystacked            1    .19378109    .14998402     .1320438    .30741718
+ Y_lnearn_ps            1    .19332872    .14926723    .13212116    .30733652
+ Y_lnearn_ss            1    .19253505    .14957507    .13202669    .30640434
+
+                    fold4        fold5        fold6        fold7        fold8
+Y1_pystacked    .13690352    .19109297    .25349922    .19863931    .16876273
+ Y_lnearn_ps    .13653789    .19137286    .25352348    .19751239    .16887988
+ Y_lnearn_ss    .13628304    .19042063    .25080905    .19670727    .16805257
+
+                    fold9       fold10
+Y1_pystacked    .23782051    .16186362
+ Y_lnearn_ps    .23552451    .16142963
+ Y_lnearn_ss    .23423916    .16104901
+(4,823 observations deleted)
+(12 missing values generated)
+(1 real change made)
+(1 real change made)
+
+     +-----------------------------------------------------------------+
+  1. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        1 | .1937811 |  .149984 | .1320438 | .3074172 | .1369035 |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |  .191093 | .2534992 | .1986393 | .1687627 | .2378205 | .1618636 |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |           conventional            |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  2. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        1 | .1933287 | .1492672 | .1321212 | .3073365 | .1365379 |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     | .1913729 | .2535235 | .1975124 | .1688799 | .2355245 | .1614296 |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                 pooled            |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  3. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        1 | .1925351 | .1495751 | .1320267 | .3064044 |  .136283 |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     | .1904206 |  .250809 | .1967073 | .1680526 | .2342392 |  .161049 |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                  short            |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  4. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  5. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  6. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  7. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  8. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  9. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 10. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 11. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 12. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 13. | lnear~e1 | lnear~e2 | lnearn~3 | lnearn~4 | lnearn~5 | lnearn~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | lnearn~7 | lnearn~8 | lnearn~9 | lnear~10 | lnear~11 | lnear~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+(note: file out_3702/lnearn_mse_plm_mse.dta not found)
+file out_3702/lnearn_mse_plm_mse.dta saved
+
+MSEs for gender_r:
+                 rep   full smp      fold 1      fold 2      fold 3      fold 4
+>       fold 5      fold 6      fold 7      fold 8      fold 9     fold 10 
+    D1_pystacked   1      0.156       0.135       0.154       0.174       0.147
+>        0.164       0.161       0.160       0.157       0.149       0.162  
+   D_gender_r_ps   1      0.156       0.135       0.154       0.174       0.147
+>        0.164       0.160       0.160       0.157       0.149       0.162  
+   D_gender_r_ss   1      0.156       0.134       0.155       0.173       0.147
+>        0.164       0.159       0.161       0.156       0.148       0.162  
+
+MSEs for lnearn:
+                 rep   full smp      fold 1      fold 2      fold 3      fold 4
+>       fold 5      fold 6      fold 7      fold 8      fold 9     fold 10 
+    Y1_pystacked   1      0.194       0.150       0.132       0.307       0.137
+>        0.191       0.253       0.199       0.169       0.238       0.162  
+     Y_lnearn_ps   1      0.193       0.149       0.132       0.307       0.137
+>        0.191       0.254       0.198       0.169       0.236       0.161  
+     Y_lnearn_ss   1      0.193       0.150       0.132       0.306       0.136
+>        0.190       0.251       0.197       0.168       0.234       0.161  
+
+gender_r_mse[3,12]
+                      rep  full_sample        fold1        fold2        fold3
+D1_pystacked            1    .15635472    .13468181    .15425665    .17390452
+D_gender_r~s            1    .15625633    .13459739    .15440252    .17402628
+D_gender_r~s            1    .15595726    .13397659    .15522147    .17337936
+
+                    fold4        fold5        fold6        fold7        fold8
+D1_pystacked    .14734031    .16438334    .16106954    .16025716    .15660139
+D_gender_r~s    .14738723    .16419259    .16048541    .15969785    .15694841
+D_gender_r~s     .1470551    .16359726    .15894679    .16107772    .15614451
+
+                    fold9       fold10
+D1_pystacked    .14945953    .16159465
+D_gender_r~s    .14927552    .16155228
+D_gender_r~s      .148446    .16172494
+(4,823 observations deleted)
+(12 missing values generated)
+(1 real change made)
+(1 real change made)
+
+     +-----------------------------------------------------------------+
+  1. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        1 | .1563547 | .1346818 | .1542567 | .1739045 | .1473403 |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     | .1643833 | .1610695 | .1602572 | .1566014 | .1494595 | .1615946 |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |           conventional            |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  2. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        1 | .1562563 | .1345974 | .1544025 | .1740263 | .1473872 |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     | .1641926 | .1604854 | .1596978 | .1569484 | .1492755 | .1615523 |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                 pooled            |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  3. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        1 | .1559573 | .1339766 | .1552215 | .1733794 | .1470551 |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     | .1635973 | .1589468 | .1610777 | .1561445 |  .148446 | .1617249 |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                  short            |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  4. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  5. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  6. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  7. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  8. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+  9. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 10. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 11. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 12. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+
+     +-----------------------------------------------------------------+
+ 13. | gende~e1 | gende~e2 | gender~3 | gender~4 | gender~5 | gender~6 |
+     |        . |        . |        . |        . |        . |        . |
+     |----------+----------+----------+----------+----------+----------|
+     | gender~7 | gender~8 | gender~9 | gende~10 | gende~11 | gende~12 |
+     |        . |        . |        . |        . |        . |        . |
+     |-----------------------------------------------------------------|
+     |             stack_type            |            model            |
+     |                                   |              plm            |
+     +-----------------------------------------------------------------+
+(note: file out_3702/gender_r_mse_plm_mse.dta not found)
+file out_3702/gender_r_mse_plm_mse.dta saved
+. 
+.         cap drop mse_*
+.         foreach var of varlist Y1_* {
+  2.                  cap drop sqerr_`var'
+  3.                  gen double sqerr_`var'=(lnearn-`var')^2
+  4.                  sum sqerr_`var', meanonly
+  5.                  gen double mse_`var'=r(mean) if _n ==1 
+  6.         }
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+.         foreach var of varlist D1_* {
+  2.                  cap drop sqerr_`var'
+  3.                  gen double sqerr_`var'=(gender_r-`var')^2
+  4.                  sum sqerr_`var', meanonly
+  5.                  gen double mse_`var'=r(mean) if _n ==1 
+  6.         }
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+(4,835 missing values generated)
+.         preserve
+.                 keep mse_*
+.                 keep if _n==1
+(4,835 observations deleted)
+.                 save `folder'/plm_mse, replace
+(note: file out_3702/plm_mse.dta not found)
+file out_3702/plm_mse.dta saved
+.         restore
+.         cap drop mse_*
+. 
+.         ** initialize results file
+.         regsave gender_r using `folder'/results.dta, ci addlabel(model,partia
+> l,seed,`seed',final,init,learner,-99) replace
+(note: file out_3702/results.dta not found)
+file out_3702/results.dta saved
+. 
+.         foreach final in nnls1 singlebest ols avg {
+  2. 
+.                 ddml estimate, robust finalest(`final')
+  3.         
+.                         // regular stacking results
+.                         ddml estimate, mname(m0) spec(st) replay  
+  4.                         regsave gender_r using `folder'/results.dta, ci ad
+> dlabel(model,partial,seed,`seed',final,`final',learner,-1) append
+  5.                         
+.                         // shortstacking results
+.                         ddml estimate, mname(m0) spec(ss) replay 
+  6.                         regsave gender_r using `folder'/results.dta, ci ad
+> dlabel(model,partial,seed,`seed',final,`final',learner,-2) append
+  7.                         
+.                         // poolstacking results
+.                         ddml estimate, mname(m0) spec(ps) replay  
+  8.                         regsave gender_r using `folder'/results.dta, ci ad
+> dlabel(model,partial,seed,`seed',final,`final',learner,-3) append     
+  9.                 
+.                         // pystacked weights
+.                         ddml extract, show(stweights)   
+ 10.                         foreach mat in Y1_pystacked_w_mn D1_pystacked_w_mn
+>  {
+ 11.                                         ddml extract, show(stweights)   
+ 12.                                         mat `mat' = r(`mat')
+ 13.                                         mat list `mat'
+ 14.                                                 preserve
+ 15.                                                 svmat `mat'
+ 16.                                                 keep `mat'*
+ 17.                                                 list if _n<=4
+ 18.                                                 save `folder'/`mat'_`final
+> '_regular, replace
+ 19.                                                 restore
+ 20.                         }       
+ 21.                         // shortstacked weights
+.                         ddml extract, show(ssweights)
+ 22.                         foreach mat in Y_lnearn_ss D_gender_r_ss {
+ 23.                                         qui ddml extract, show(ssweights)
+ 24.                                         mat `mat' = r(`mat')
+ 25.                                         mat list `mat'
+ 26.                                                 preserve
+ 27.                                                 svmat `mat'
+ 28.                                                 keep `mat'*
+ 29.                                                 list if _n<=4
+ 30.                                                 save `folder'/`mat'_`final
+> '_short, replace
+ 31.                                                 restore
+ 32.                         }       
+ 33.                         // poolstacked weights
+. 
+.                         foreach mat in Y_lnearn_ps D_gender_r_ps {
+ 34.                                         qui ddml extract, show(psweights)
+ 35.                                         mat `mat' = r(`mat')
+ 36.                                         mat list `mat'
+ 37.                                                 preserve
+ 38.                                                 svmat `mat'
+ 39.                                                 keep `mat'*
+ 40.                                                 list if _n<=4
+ 41.                                                 save `folder'/`mat'_`final
+> '_pooled, replace
+ 42.                                                 restore
+ 43.                         }       
+ 44.         
+.         }
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.099    (0.017)
+  ps  1   [poolstack]          [ps]    -0.099    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0988764   .0165523    -5.97   0.000    -.1313183   -.0664345
+       _cons |  -.0023738   .0062887    -0.38   0.706    -.0146994    .0099518
+------------------------------------------------------------------------------
+Stacking final estimator: nnls1
+
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.099    (0.017)
+  ps  1   [poolstack]          [ps]    -0.099    (0.017)
+
+Stacking DDML model
+y-E[y|X]  = y-Y1_pystacked_1                       Number of obs   =      4836
+D-E[D|X]  = D-D1_pystacked_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1013563   .0166575    -6.08   0.000    -.1340043   -.0687083
+       _cons |  -.0010153   .0063069    -0.16   0.872    -.0133766     .011346
+------------------------------------------------------------------------------
+Stacking final estimator: nnls1
+
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ss  1  Y1_pystacked  D1_pystacked    -0.099    (0.017)
+  ss  1  [shortstack]          [ss]    -0.099    (0.017)
+  ps  1   [poolstack]          [ps]    -0.099    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0988764   .0165523    -5.97   0.000    -.1313183   -.0664345
+       _cons |  -.0023738   .0062887    -0.38   0.706    -.0146994    .0099518
+------------------------------------------------------------------------------
+Stacking final estimator: nnls1
+
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ps  1  Y1_pystacked  D1_pystacked    -0.099    (0.017)
+  ss  1  [shortstack]          [ss]    -0.099    (0.017)
+  ps  1   [poolstack]          [ps]    -0.099    (0.017)
+
+Poolstack DDML model
+y-E[y|X]  = y-Y_lnearn_ps_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ps_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0993093   .0166415    -5.97   0.000    -.1319261   -.0666925
+       _cons |   -.002457   .0063012    -0.39   0.697     -.014807    .0098931
+------------------------------------------------------------------------------
+Stacking final estimator: nnls1
+
+file out_3702/results.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .06399378    .06399378
+      ols            2    .00029559    .00029559
+  lassocv            3    .29651471    .29651471
+  ridgecv            4    2.122e-17    2.122e-17
+  lassocv            5    2.009e-17    2.009e-17
+  ridgecv            6    2.637e-17    2.637e-17
+       rf            7     .3986044     .3986044
+       rf            8    9.157e-17    9.157e-17
+       rf            9    1.157e-16    1.157e-16
+gradboost           10    .00993623    .00993623
+gradboost           11    .20707378    .20707378
+     nnet           12    .00685131    .00685131
+     nnet           13     .0167302     .0167302
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .01676817    .01676817
+      ols            2    9.295e-17    9.295e-17
+  lassocv            3    .03452935    .03452935
+  ridgecv            4    .11911258    .11911258
+  lassocv            5    .01483884    .01483884
+  ridgecv            6    .18879262    .18879262
+       rf            7    .40182179    .40182179
+       rf            8    8.854e-17    8.854e-17
+       rf            9    9.718e-17    9.718e-17
+gradboost           10    .03738146    .03738146
+gradboost           11    .13194934    .13194934
+     nnet           12     .0336153     .0336153
+     nnet           13    .02119054    .02119054
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .06399378    .06399378
+      ols            2    .00029559    .00029559
+  lassocv            3    .29651471    .29651471
+  ridgecv            4    2.122e-17    2.122e-17
+  lassocv            5    2.009e-17    2.009e-17
+  ridgecv            6    2.637e-17    2.637e-17
+       rf            7     .3986044     .3986044
+       rf            8    9.157e-17    9.157e-17
+       rf            9    1.157e-16    1.157e-16
+gradboost           10    .00993623    .00993623
+gradboost           11    .20707378    .20707378
+     nnet           12    .00685131    .00685131
+     nnet           13     .0167302     .0167302
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .01676817    .01676817
+      ols            2    9.295e-17    9.295e-17
+  lassocv            3    .03452935    .03452935
+  ridgecv            4    .11911258    .11911258
+  lassocv            5    .01483884    .01483884
+  ridgecv            6    .18879262    .18879262
+       rf            7    .40182179    .40182179
+       rf            8    8.854e-17    8.854e-17
+       rf            9    9.718e-17    9.718e-17
+gradboost           10    .03738146    .03738146
+gradboost           11    .13194934    .13194934
+     nnet           12     .0336153     .0336153
+     nnet           13    .02119054    .02119054
+
+Y1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .01676817    .01676817
+      ols            2    9.295e-17    9.295e-17
+  lassocv            3    .03452935    .03452935
+  ridgecv            4    .11911258    .11911258
+  lassocv            5    .01483884    .01483884
+  ridgecv            6    .18879262    .18879262
+       rf            7    .40182179    .40182179
+       rf            8    8.854e-17    8.854e-17
+       rf            9    9.718e-17    9.718e-17
+gradboost           10    .03738146    .03738146
+gradboost           11    .13194934    .13194934
+     nnet           12     .0336153     .0336153
+     nnet           13    .02119054    .02119054
+
+      +--------------------------------+
+      | Y1_pys~1   Y1_pys~2   Y1_pys~3 |
+      |--------------------------------|
+   1. |        1   .0167682   .0167682 |
+   2. |        2   9.29e-17   9.29e-17 |
+   3. |        3   .0345294   .0345294 |
+   4. |        4   .1191126   .1191126 |
+      +--------------------------------+
+(note: file out_3702/Y1_pystacked_w_mn_nnls1_regular.dta not found)
+file out_3702/Y1_pystacked_w_mn_nnls1_regular.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .06399378    .06399378
+      ols            2    .00029559    .00029559
+  lassocv            3    .29651471    .29651471
+  ridgecv            4    2.122e-17    2.122e-17
+  lassocv            5    2.009e-17    2.009e-17
+  ridgecv            6    2.637e-17    2.637e-17
+       rf            7     .3986044     .3986044
+       rf            8    9.157e-17    9.157e-17
+       rf            9    1.157e-16    1.157e-16
+gradboost           10    .00993623    .00993623
+gradboost           11    .20707378    .20707378
+     nnet           12    .00685131    .00685131
+     nnet           13     .0167302     .0167302
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .01676817    .01676817
+      ols            2    9.295e-17    9.295e-17
+  lassocv            3    .03452935    .03452935
+  ridgecv            4    .11911258    .11911258
+  lassocv            5    .01483884    .01483884
+  ridgecv            6    .18879262    .18879262
+       rf            7    .40182179    .40182179
+       rf            8    8.854e-17    8.854e-17
+       rf            9    9.718e-17    9.718e-17
+gradboost           10    .03738146    .03738146
+gradboost           11    .13194934    .13194934
+     nnet           12     .0336153     .0336153
+     nnet           13    .02119054    .02119054
+
+D1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .06399378    .06399378
+      ols            2    .00029559    .00029559
+  lassocv            3    .29651471    .29651471
+  ridgecv            4    2.122e-17    2.122e-17
+  lassocv            5    2.009e-17    2.009e-17
+  ridgecv            6    2.637e-17    2.637e-17
+       rf            7     .3986044     .3986044
+       rf            8    9.157e-17    9.157e-17
+       rf            9    1.157e-16    1.157e-16
+gradboost           10    .00993623    .00993623
+gradboost           11    .20707378    .20707378
+     nnet           12    .00685131    .00685131
+     nnet           13     .0167302     .0167302
+
+      +--------------------------------+
+      | D1_pys~1   D1_pys~2   D1_pys~3 |
+      |--------------------------------|
+   1. |        1   .0639938   .0639938 |
+   2. |        2   .0002956   .0002956 |
+   3. |        3   .2965147   .2965147 |
+   4. |        4   2.12e-17   2.12e-17 |
+      +--------------------------------+
+(note: file out_3702/D1_pystacked_w_mn_nnls1_regular.dta not found)
+file out_3702/D1_pystacked_w_mn_nnls1_regular.dta saved
+
+short-stacked weights across resamples for gender_r
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    .13778969    .13778969
+      ols            2            0            0
+  lassocv            3    .15270406    .15270406
+  ridgecv            4    3.568e-17    3.568e-17
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7    .42490652    .42490652
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10    .00237278    .00237278
+gradboost           11    .28222695    .28222695
+     nnet           12            0            0
+     nnet           13            0            0
+
+short-stacked weights across resamples for lnearn
+final stacking estimator: nnls1
+               learner  mean_weight        rep_1
+      ols            1    1.222e-16    1.222e-16
+      ols            2    3.409e-17    3.409e-17
+  lassocv            3    1.376e-17    1.376e-17
+  ridgecv            4    9.983e-17    9.983e-17
+  lassocv            5     .0053023     .0053023
+  ridgecv            6    .44364637    .44364637
+       rf            7    .41337998    .41337998
+       rf            8            0            0
+       rf            9    1.932e-16    1.932e-16
+gradboost           10    1.638e-17    1.638e-17
+gradboost           11    .12144855    .12144855
+     nnet           12            0            0
+     nnet           13    .01622281    .01622281
+
+Y_lnearn_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1    1.222e-16    1.222e-16
+      ols            2    3.409e-17    3.409e-17
+  lassocv            3    1.376e-17    1.376e-17
+  ridgecv            4    9.983e-17    9.983e-17
+  lassocv            5     .0053023     .0053023
+  ridgecv            6    .44364637    .44364637
+       rf            7    .41337998    .41337998
+       rf            8            0            0
+       rf            9    1.932e-16    1.932e-16
+gradboost           10    1.638e-17    1.638e-17
+gradboost           11    .12144855    .12144855
+     nnet           12            0            0
+     nnet           13    .01622281    .01622281
+
+      +--------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnea~2   Y_lnea~3 |
+      |--------------------------------------------|
+   1. | 2.6178078          1   1.22e-16   1.22e-16 |
+   2. |  3.109583          2   3.41e-17   3.41e-17 |
+   3. | 2.8456576          3   1.38e-17   1.38e-17 |
+   4. | 2.5027572          4   9.98e-17   9.98e-17 |
+      +--------------------------------------------+
+(note: file out_3702/Y_lnearn_ss_nnls1_short.dta not found)
+file out_3702/Y_lnearn_ss_nnls1_short.dta saved
+
+D_gender_r_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .13778969    .13778969
+      ols            2            0            0
+  lassocv            3    .15270406    .15270406
+  ridgecv            4    3.568e-17    3.568e-17
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7    .42490652    .42490652
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10    .00237278    .00237278
+gradboost           11    .28222695    .28222695
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .77483806          1   .1377897   .1377897 |
+   2. | .49771151          2          0          0 |
+   3. | .14650798          3   .1527041   .1527041 |
+   4. | .30694078          4   3.57e-17   3.57e-17 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ss_nnls1_short.dta not found)
+file out_3702/D_gender_r_ss_nnls1_short.dta saved
+
+Y_lnearn_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .01503831    .01503831
+      ols            2    1.440e-17    1.440e-17
+  lassocv            3    .07008425    .07008425
+  ridgecv            4    .17192157    .17192157
+  lassocv            5    1.708e-15    1.708e-15
+  ridgecv            6    .09693702    .09693702
+       rf            7    .43508928    .43508928
+       rf            8    3.393e-16    3.393e-16
+       rf            9    2.068e-15    2.068e-15
+gradboost           10    .02256672    .02256672
+gradboost           11    .15735693    .15735693
+     nnet           12    3.160e-16    3.160e-16
+     nnet           13    .03100591    .03100591
+
+      +--------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnea~2   Y_lnea~3 |
+      |--------------------------------------------|
+   1. | 2.6127463          1   .0150383   .0150383 |
+   2. |    3.1223          2   1.44e-17   1.44e-17 |
+   3. | 2.8406468          3   .0700843   .0700843 |
+   4. | 2.5098703          4   .1719216   .1719216 |
+      +--------------------------------------------+
+(note: file out_3702/Y_lnearn_ps_nnls1_pooled.dta not found)
+file out_3702/Y_lnearn_ps_nnls1_pooled.dta saved
+
+D_gender_r_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1     .0524424     .0524424
+      ols            2    1.007e-15    1.007e-15
+  lassocv            3    .31573925    .31573925
+  ridgecv            4    4.091e-16    4.091e-16
+  lassocv            5    8.173e-17    8.173e-17
+  ridgecv            6    1.409e-16    1.409e-16
+       rf            7     .4033057     .4033057
+       rf            8    3.092e-16    3.092e-16
+       rf            9    2.356e-16    2.356e-16
+gradboost           10    3.332e-16    3.332e-16
+gradboost           11      .212251      .212251
+     nnet           12            0            0
+     nnet           13    .01626164    .01626164
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .76367998          1   .0524424   .0524424 |
+   2. | .48130847          2   1.01e-15   1.01e-15 |
+   3. | .16420312          3   .3157392   .3157392 |
+   4. | .31016117          4   4.09e-16   4.09e-16 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ps_nnls1_pooled.dta not found)
+file out_3702/D_gender_r_ps_nnls1_pooled.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.103    (0.017)
+  ss  1  [shortstack]          [ss]    -0.095    (0.016)
+  ps  1   [poolstack]          [ps]    -0.105    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0946857   .0164812    -5.75   0.000    -.1269883   -.0623831
+       _cons |  -.0009649   .0063719    -0.15   0.880    -.0134536    .0115239
+------------------------------------------------------------------------------
+Stacking final estimator: singlebest
+
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.103    (0.017)
+  ss  1  [shortstack]          [ss]    -0.095    (0.016)
+  ps  1   [poolstack]          [ps]    -0.105    (0.017)
+
+Stacking DDML model
+y-E[y|X]  = y-Y1_pystacked_1                       Number of obs   =      4836
+D-E[D|X]  = D-D1_pystacked_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1030385   .0167407    -6.15   0.000    -.1358496   -.0702273
+       _cons |  -.0024254   .0064142    -0.38   0.705     -.014997    .0101462
+------------------------------------------------------------------------------
+Stacking final estimator: singlebest
+
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ss  1  Y1_pystacked  D1_pystacked    -0.095    (0.016)
+  ss  1  [shortstack]          [ss]    -0.095    (0.016)
+  ps  1   [poolstack]          [ps]    -0.105    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0946857   .0164812    -5.75   0.000    -.1269883   -.0623831
+       _cons |  -.0009649   .0063719    -0.15   0.880    -.0134536    .0115239
+------------------------------------------------------------------------------
+Stacking final estimator: singlebest
+
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ps  1  Y1_pystacked  D1_pystacked    -0.105    (0.017)
+  ss  1  [shortstack]          [ss]    -0.095    (0.016)
+  ps  1   [poolstack]          [ps]    -0.105    (0.017)
+
+Poolstack DDML model
+y-E[y|X]  = y-Y_lnearn_ps_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ps_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1051086   .0168652    -6.23   0.000    -.1381638   -.0720535
+       _cons |  -.0027224   .0063698    -0.43   0.669    -.0152069    .0097622
+------------------------------------------------------------------------------
+Stacking final estimator: singlebest
+
+file out_3702/results.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3           .5           .5
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7           .5           .5
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5           .1           .1
+  ridgecv            6           .2           .2
+       rf            7           .7           .7
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3           .5           .5
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7           .5           .5
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5           .1           .1
+  ridgecv            6           .2           .2
+       rf            7           .7           .7
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+Y1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5           .1           .1
+  ridgecv            6           .2           .2
+       rf            7           .7           .7
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------+
+      | Y1_pys~1   Y1_pys~2   Y1_pys~3 |
+      |--------------------------------|
+   1. |        1          0          0 |
+   2. |        2          0          0 |
+   3. |        3          0          0 |
+   4. |        4          0          0 |
+      +--------------------------------+
+(note: file out_3702/Y1_pystacked_w_mn_singlebest_regular.dta not found)
+file out_3702/Y1_pystacked_w_mn_singlebest_regular.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3           .5           .5
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7           .5           .5
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5           .1           .1
+  ridgecv            6           .2           .2
+       rf            7           .7           .7
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+D1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3           .5           .5
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7           .5           .5
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------+
+      | D1_pys~1   D1_pys~2   D1_pys~3 |
+      |--------------------------------|
+   1. |        1          0          0 |
+   2. |        2          0          0 |
+   3. |        3         .5         .5 |
+   4. |        4          0          0 |
+      +--------------------------------+
+(note: file out_3702/D1_pystacked_w_mn_singlebest_regular.dta not found)
+file out_3702/D1_pystacked_w_mn_singlebest_regular.dta saved
+
+short-stacked weights across resamples for gender_r
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7            1            1
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+short-stacked weights across resamples for lnearn
+final stacking estimator: singlebest
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            1            1
+       rf            7            0            0
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+Y_lnearn_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            1            1
+       rf            7            0            0
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnea~2   Y_lnea~3 |
+      |--------------------------------------------|
+   1. |  2.641021          1          0          0 |
+   2. | 3.1060512          2          0          0 |
+   3. |  2.841748          3          0          0 |
+   4. | 2.4878571          4          0          0 |
+      +--------------------------------------------+
+(note: file out_3702/Y_lnearn_ss_singlebest_short.dta not found)
+file out_3702/Y_lnearn_ss_singlebest_short.dta saved
+
+D_gender_r_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7            1            1
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .83200002          1          0          0 |
+   2. | .54799998          2          0          0 |
+   3. | .18000001          3          0          0 |
+   4. |      .204          4          0          0 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ss_singlebest_short.dta not found)
+file out_3702/D_gender_r_ss_singlebest_short.dta saved
+
+Y_lnearn_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            0            0
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7            1            1
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnea~2   Y_lnea~3 |
+      |--------------------------------------------|
+   1. | 2.5817358          1          0          0 |
+   2. | 3.0292046          2          0          0 |
+   3. | 2.8616664          3          0          0 |
+   4. | 2.5253651          4          0          0 |
+      +--------------------------------------------+
+(note: file out_3702/Y_lnearn_ps_singlebest_pooled.dta not found)
+file out_3702/Y_lnearn_ps_singlebest_pooled.dta saved
+
+D_gender_r_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1            0            0
+      ols            2            0            0
+  lassocv            3            1            1
+  ridgecv            4            0            0
+  lassocv            5            0            0
+  ridgecv            6            0            0
+       rf            7            0            0
+       rf            8            0            0
+       rf            9            0            0
+gradboost           10            0            0
+gradboost           11            0            0
+     nnet           12            0            0
+     nnet           13            0            0
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .66007388          1          0          0 |
+   2. | .38840684          2          0          0 |
+   3. | .22659516          3          1          1 |
+   4. | .39082301          4          0          0 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ps_singlebest_pooled.dta not found)
+file out_3702/D_gender_r_ps_singlebest_pooled.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.180    (0.032)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1008764    .016581    -6.08   0.000    -.1333745   -.0683782
+       _cons |    -.05467   .0062016    -8.82   0.000    -.0668249   -.0425151
+------------------------------------------------------------------------------
+Stacking final estimator: ols
+
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.180    (0.032)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Stacking DDML model
+y-E[y|X]  = y-Y1_pystacked_1                       Number of obs   =      4836
+D-E[D|X]  = D-D1_pystacked_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1803871   .0317663    -5.68   0.000    -.2426479   -.1181262
+       _cons |   .5844775    .018335    31.88   0.000     .5485415    .6204135
+------------------------------------------------------------------------------
+Stacking final estimator: ols
+
+(note: variable final was str3, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ss  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1008764    .016581    -6.08   0.000    -.1333745   -.0683782
+       _cons |    -.05467   .0062016    -8.82   0.000    -.0668249   -.0425151
+------------------------------------------------------------------------------
+Stacking final estimator: ols
+
+(note: variable final was str3, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ps  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Poolstack DDML model
+y-E[y|X]  = y-Y_lnearn_ps_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ps_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |   -.100619   .0166936    -6.03   0.000    -.1333379      -.0679
+       _cons |  -.0505982     .00618    -8.19   0.000    -.0627107   -.0384857
+------------------------------------------------------------------------------
+Stacking final estimator: ols
+
+(note: variable final was str3, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1    .04202813    .04202813
+      ols            2    .17433795    .17433795
+  lassocv            3    .37576372    .37576372
+  ridgecv            4    .09154364    .09154364
+  lassocv            5   -.15316631   -.15316631
+  ridgecv            6   -.02536737   -.02536737
+       rf            7    .48918028    .48918028
+       rf            8    .63533209    .63533209
+       rf            9   -.73994186   -.73994186
+gradboost           10     .0690427     .0690427
+gradboost           11    .12433302    .12433302
+     nnet           12    .07606854    .07606854
+     nnet           13    .01371165    .01371165
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1   -.01270269   -.01270269
+      ols            2     -.010424     -.010424
+  lassocv            3   -.04616842   -.04616842
+  ridgecv            4    .12289614    .12289614
+  lassocv            5   -.05433754   -.05433754
+  ridgecv            6    .42384219    .42384219
+       rf            7    .51241061    .51241061
+       rf            8     .3867063     .3867063
+       rf            9   -.51931556   -.51931556
+gradboost           10    .10487671    .10487671
+gradboost           11    .06276483    .06276483
+     nnet           12   -.19932392   -.19932392
+     nnet           13    .01074688    .01074688
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1    .04202813    .04202813
+      ols            2    .17433795    .17433795
+  lassocv            3    .37576372    .37576372
+  ridgecv            4    .09154364    .09154364
+  lassocv            5   -.15316631   -.15316631
+  ridgecv            6   -.02536737   -.02536737
+       rf            7    .48918028    .48918028
+       rf            8    .63533209    .63533209
+       rf            9   -.73994186   -.73994186
+gradboost           10     .0690427     .0690427
+gradboost           11    .12433302    .12433302
+     nnet           12    .07606854    .07606854
+     nnet           13    .01371165    .01371165
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1   -.01270269   -.01270269
+      ols            2     -.010424     -.010424
+  lassocv            3   -.04616842   -.04616842
+  ridgecv            4    .12289614    .12289614
+  lassocv            5   -.05433754   -.05433754
+  ridgecv            6    .42384219    .42384219
+       rf            7    .51241061    .51241061
+       rf            8     .3867063     .3867063
+       rf            9   -.51931556   -.51931556
+gradboost           10    .10487671    .10487671
+gradboost           11    .06276483    .06276483
+     nnet           12   -.19932392   -.19932392
+     nnet           13    .01074688    .01074688
+
+Y1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1   -.01270269   -.01270269
+      ols            2     -.010424     -.010424
+  lassocv            3   -.04616842   -.04616842
+  ridgecv            4    .12289614    .12289614
+  lassocv            5   -.05433754   -.05433754
+  ridgecv            6    .42384219    .42384219
+       rf            7    .51241061    .51241061
+       rf            8     .3867063     .3867063
+       rf            9   -.51931556   -.51931556
+gradboost           10    .10487671    .10487671
+gradboost           11    .06276483    .06276483
+     nnet           12   -.19932392   -.19932392
+     nnet           13    .01074688    .01074688
+
+      +----------------------------------+
+      | Y1_pys~1   Y1_pyst~2   Y1_pyst~3 |
+      |----------------------------------|
+   1. |        1   -.0127027   -.0127027 |
+   2. |        2    -.010424    -.010424 |
+   3. |        3   -.0461684   -.0461684 |
+   4. |        4    .1228961    .1228961 |
+      +----------------------------------+
+(note: file out_3702/Y1_pystacked_w_mn_ols_regular.dta not found)
+file out_3702/Y1_pystacked_w_mn_ols_regular.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1    .04202813    .04202813
+      ols            2    .17433795    .17433795
+  lassocv            3    .37576372    .37576372
+  ridgecv            4    .09154364    .09154364
+  lassocv            5   -.15316631   -.15316631
+  ridgecv            6   -.02536737   -.02536737
+       rf            7    .48918028    .48918028
+       rf            8    .63533209    .63533209
+       rf            9   -.73994186   -.73994186
+gradboost           10     .0690427     .0690427
+gradboost           11    .12433302    .12433302
+     nnet           12    .07606854    .07606854
+     nnet           13    .01371165    .01371165
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1   -.01270269   -.01270269
+      ols            2     -.010424     -.010424
+  lassocv            3   -.04616842   -.04616842
+  ridgecv            4    .12289614    .12289614
+  lassocv            5   -.05433754   -.05433754
+  ridgecv            6    .42384219    .42384219
+       rf            7    .51241061    .51241061
+       rf            8     .3867063     .3867063
+       rf            9   -.51931556   -.51931556
+gradboost           10    .10487671    .10487671
+gradboost           11    .06276483    .06276483
+     nnet           12   -.19932392   -.19932392
+     nnet           13    .01074688    .01074688
+
+D1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .04202813    .04202813
+      ols            2    .17433795    .17433795
+  lassocv            3    .37576372    .37576372
+  ridgecv            4    .09154364    .09154364
+  lassocv            5   -.15316631   -.15316631
+  ridgecv            6   -.02536737   -.02536737
+       rf            7    .48918028    .48918028
+       rf            8    .63533209    .63533209
+       rf            9   -.73994186   -.73994186
+gradboost           10     .0690427     .0690427
+gradboost           11    .12433302    .12433302
+     nnet           12    .07606854    .07606854
+     nnet           13    .01371165    .01371165
+
+      +--------------------------------+
+      | D1_pys~1   D1_pys~2   D1_pys~3 |
+      |--------------------------------|
+   1. |        1   .0420281   .0420281 |
+   2. |        2   .1743379   .1743379 |
+   3. |        3   .3757637   .3757637 |
+   4. |        4   .0915436   .0915436 |
+      +--------------------------------+
+(note: file out_3702/D1_pystacked_w_mn_ols_regular.dta not found)
+file out_3702/D1_pystacked_w_mn_ols_regular.dta saved
+
+short-stacked weights across resamples for gender_r
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1      .104793      .104793
+      ols            2    .17428166    .17428166
+  lassocv            3    .44215268    .44215268
+  ridgecv            4    .04829274    .04829274
+  lassocv            5   -.45399084   -.45399084
+  ridgecv            6    .11049444    .11049444
+       rf            7    .51999778    .51999778
+       rf            8    .65636351    .65636351
+       rf            9   -.85490668   -.85490668
+gradboost           10    .16988061    .16988061
+gradboost           11    .17658693    .17658693
+     nnet           12   -.03521689   -.03521689
+     nnet           13   -.00841218   -.00841218
+
+short-stacked weights across resamples for lnearn
+final stacking estimator: ols
+               learner  mean_weight        rep_1
+      ols            1   -.03986003   -.03986003
+      ols            2    .00778144    .00778144
+  lassocv            3   -.04109627   -.04109627
+  ridgecv            4   -.09547691   -.09547691
+  lassocv            5   -.04321509   -.04321509
+  ridgecv            6    .67220209    .67220209
+       rf            7    .62915966    .62915966
+       rf            8    .20222936    .20222936
+       rf            9   -.46874346   -.46874346
+gradboost           10    .11843693    .11843693
+gradboost           11    .02920223    .02920223
+     nnet           12    .04596405    .04596405
+     nnet           13    .00121735    .00121735
+
+Y_lnearn_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1   -.03986003   -.03986003
+      ols            2    .00778144    .00778144
+  lassocv            3   -.04109627   -.04109627
+  ridgecv            4   -.09547691   -.09547691
+  lassocv            5   -.04321509   -.04321509
+  ridgecv            6    .67220209    .67220209
+       rf            7    .62915966    .62915966
+       rf            8    .20222936    .20222936
+       rf            9   -.46874346   -.46874346
+gradboost           10    .11843693    .11843693
+gradboost           11    .02920223    .02920223
+     nnet           12    .04596405    .04596405
+     nnet           13    .00121735    .00121735
+
+      +----------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnear~2   Y_lnear~3 |
+      |----------------------------------------------|
+   1. | 2.6261849          1     -.03986     -.03986 |
+   2. | 3.1794369          2    .0077814    .0077814 |
+   3. | 2.9133425          3   -.0410963   -.0410963 |
+   4. | 2.5306747          4   -.0954769   -.0954769 |
+      +----------------------------------------------+
+(note: file out_3702/Y_lnearn_ss_ols_short.dta not found)
+file out_3702/Y_lnearn_ss_ols_short.dta saved
+
+D_gender_r_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1      .104793      .104793
+      ols            2    .17428166    .17428166
+  lassocv            3    .44215268    .44215268
+  ridgecv            4    .04829274    .04829274
+  lassocv            5   -.45399084   -.45399084
+  ridgecv            6    .11049444    .11049444
+       rf            7    .51999778    .51999778
+       rf            8    .65636351    .65636351
+       rf            9   -.85490668   -.85490668
+gradboost           10    .16988061    .16988061
+gradboost           11    .17658693    .17658693
+     nnet           12   -.03521689   -.03521689
+     nnet           13   -.00841218   -.00841218
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .82438228          1    .104793    .104793 |
+   2. | .51342483          2   .1742817   .1742817 |
+   3. | .11506553          3   .4421527   .4421527 |
+   4. | .20524015          4   .0482927   .0482927 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ss_ols_short.dta not found)
+file out_3702/D_gender_r_ss_ols_short.dta saved
+
+Y_lnearn_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1    -.0064254    -.0064254
+      ols            2    -.0091986    -.0091986
+  lassocv            3    .04962049    .04962049
+  ridgecv            4    .16272194    .16272194
+  lassocv            5   -.19234177   -.19234177
+  ridgecv            6    .41623071    .41623071
+       rf            7    .51648852    .51648852
+       rf            8    .43392877    .43392877
+       rf            9   -.57100241   -.57100241
+gradboost           10    .11606514    .11606514
+gradboost           11    .06878861    .06878861
+     nnet           12    .01735438    .01735438
+     nnet           13    .01262442    .01262442
+
+      +----------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnear~2   Y_lnear~3 |
+      |----------------------------------------------|
+   1. | 2.6190202          1   -.0064254   -.0064254 |
+   2. | 3.1621047          2   -.0091986   -.0091986 |
+   3. | 2.9004983          3    .0496205    .0496205 |
+   4. | 2.5200465          4    .1627219    .1627219 |
+      +----------------------------------------------+
+(note: file out_3702/Y_lnearn_ps_ols_pooled.dta not found)
+file out_3702/Y_lnearn_ps_ols_pooled.dta saved
+
+D_gender_r_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .04127017    .04127017
+      ols            2    .17473936    .17473936
+  lassocv            3    .35025382    .35025382
+  ridgecv            4    .13128708    .13128708
+  lassocv            5   -.10715929   -.10715929
+  ridgecv            6   -.07147248   -.07147248
+       rf            7    .49333454    .49333454
+       rf            8    .63075561    .63075561
+       rf            9   -.74078926   -.74078926
+gradboost           10     .0624043     .0624043
+gradboost           11    .12622937    .12622937
+     nnet           12    .01644084    .01644084
+     nnet           13    .01438201    .01438201
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .84457525          1   .0412702   .0412702 |
+   2. | .53674011          2   .1747394   .1747394 |
+   3. | .18456004          3   .3502538   .3502538 |
+   4. | .27048774          4   .1312871   .1312871 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ps_ols_pooled.dta not found)
+file out_3702/D_gender_r_ps_ols_pooled.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1011679   .0166653    -6.07   0.000    -.1338312   -.0685045
+       _cons |  -.0001694   .0063656    -0.03   0.979    -.0126458     .012307
+------------------------------------------------------------------------------
+Stacking final estimator: avg
+
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  st  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Stacking DDML model
+y-E[y|X]  = y-Y1_pystacked_1                       Number of obs   =      4836
+D-E[D|X]  = D-D1_pystacked_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1011679   .0166653    -6.07   0.000    -.1338312   -.0685045
+       _cons |  -.0001694   .0063656    -0.03   0.979    -.0126458     .012307
+------------------------------------------------------------------------------
+Stacking final estimator: avg
+
+(note: variable final was str3, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ss  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Shortstack DDML model
+y-E[y|X]  = y-Y_lnearn_ss_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ss_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1011679   .0166653    -6.07   0.000    -.1338312   -.0685045
+       _cons |  -.0001694   .0063656    -0.03   0.979    -.0126458     .012307
+------------------------------------------------------------------------------
+Stacking final estimator: avg
+
+(note: variable final was str3, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+
+Model:                  partial, crossfit folds k=10, resamples r=1
+Mata global (mname):    m0
+Dependent variable (Y): lnearn
+ lnearn learners:       Y1_pystacked
+D equations (1):        gender_r
+ gender_r learners:     D1_pystacked
+
+DDML estimation results:
+spec  r     Y learner     D learner         b        SE 
+  ps  1  Y1_pystacked  D1_pystacked    -0.101    (0.017)
+  ss  1  [shortstack]          [ss]    -0.101    (0.017)
+  ps  1   [poolstack]          [ps]    -0.101    (0.017)
+
+Poolstack DDML model
+y-E[y|X]  = y-Y_lnearn_ps_1                        Number of obs   =      4836
+D-E[D|X]  = D-D_gender_r_ps_1 
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1011679   .0166653    -6.07   0.000    -.1338312   -.0685045
+       _cons |  -.0001694   .0063656    -0.03   0.979    -.0126458     .012307
+------------------------------------------------------------------------------
+Stacking final estimator: avg
+
+(note: variable final was str3, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+Y1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+      +--------------------------------+
+      | Y1_pys~1   Y1_pys~2   Y1_pys~3 |
+      |--------------------------------|
+   1. |        1   .0769231   .0769231 |
+   2. |        2   .0769231   .0769231 |
+   3. |        3   .0769231   .0769231 |
+   4. |        4   .0769231   .0769231 |
+      +--------------------------------+
+(note: file out_3702/Y1_pystacked_w_mn_avg_regular.dta not found)
+file out_3702/Y1_pystacked_w_mn_avg_regular.dta saved
+
+mean stacking weights across folds/resamples for D1_pystacked (gender_r)
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+mean stacking weights across folds/resamples for Y1_pystacked (lnearn)
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+D1_pystacked_w_mn[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+      +--------------------------------+
+      | D1_pys~1   D1_pys~2   D1_pys~3 |
+      |--------------------------------|
+   1. |        1   .0769231   .0769231 |
+   2. |        2   .0769231   .0769231 |
+   3. |        3   .0769231   .0769231 |
+   4. |        4   .0769231   .0769231 |
+      +--------------------------------+
+(note: file out_3702/D1_pystacked_w_mn_avg_regular.dta not found)
+file out_3702/D1_pystacked_w_mn_avg_regular.dta saved
+
+short-stacked weights across resamples for gender_r
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+short-stacked weights across resamples for lnearn
+final stacking estimator: avg
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+Y_lnearn_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+      +--------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnea~2   Y_lnea~3 |
+      |--------------------------------------------|
+   1. | 2.6502786          1   .0769231   .0769231 |
+   2. | 3.1839002          2   .0769231   .0769231 |
+   3. | 2.8204756          3   .0769231   .0769231 |
+   4. | 2.5467854          4   .0769231   .0769231 |
+      +--------------------------------------------+
+(note: file out_3702/Y_lnearn_ss_avg_short.dta not found)
+file out_3702/Y_lnearn_ss_avg_short.dta saved
+
+D_gender_r_ss[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .70680773          1   .0769231   .0769231 |
+   2. | .44743285          2   .0769231   .0769231 |
+   3. | .23929961          3   .0769231   .0769231 |
+   4. | .41516069          4   .0769231   .0769231 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ss_avg_short.dta not found)
+file out_3702/D_gender_r_ss_avg_short.dta saved
+
+Y_lnearn_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+      +--------------------------------------------+
+      | Y_lnea~_1   Y_lne~s1   Y_lnea~2   Y_lnea~3 |
+      |--------------------------------------------|
+   1. | 2.6502786          1   .0769231   .0769231 |
+   2. | 3.1839002          2   .0769231   .0769231 |
+   3. | 2.8204756          3   .0769231   .0769231 |
+   4. | 2.5467854          4   .0769231   .0769231 |
+      +--------------------------------------------+
+(note: file out_3702/Y_lnearn_ps_avg_pooled.dta not found)
+file out_3702/Y_lnearn_ps_avg_pooled.dta saved
+
+D_gender_r_ps[13,3]
+               learner  mean_weight        rep_1
+      ols            1    .07692308    .07692308
+      ols            2    .07692308    .07692308
+  lassocv            3    .07692308    .07692308
+  ridgecv            4    .07692308    .07692308
+  lassocv            5    .07692308    .07692308
+  ridgecv            6    .07692308    .07692308
+       rf            7    .07692308    .07692308
+       rf            8    .07692308    .07692308
+       rf            9    .07692308    .07692308
+gradboost           10    .07692308    .07692308
+gradboost           11    .07692308    .07692308
+     nnet           12    .07692308    .07692308
+     nnet           13    .07692308    .07692308
+
+      +--------------------------------------------+
+      | D_gend~_1   D_gen~s1   D_gend~2   D_gend~3 |
+      |--------------------------------------------|
+   1. | .70680773          1   .0769231   .0769231 |
+   2. | .44743285          2   .0769231   .0769231 |
+   3. | .23929961          3   .0769231   .0769231 |
+   4. | .41516069          4   .0769231   .0769231 |
+      +--------------------------------------------+
+(note: file out_3702/D_gender_r_ps_avg_pooled.dta not found)
+file out_3702/D_gender_r_ps_avg_pooled.dta saved
+. 
+.         forvalues i = 1(1)$L {
+  2.                         ddml estimate, y(Y1_pystacked_L`i'_1) ///
+>                                                         d(D1_pystacked_L`i'_1
+> ) robust
+  3.                         regsave gender_r using `folder'/results.dta, ci //
+> /
+>                                                 addlabel(model,partial,seed,`
+> seed',final,indiv,learner,`i') ///
+>                                                 append
+  4.         }
+
+y-E[y|X]  = Y1_pystacked_L1_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L1_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0363837   .0485034    -0.75   0.453    -.1314485    .0586812
+       _cons |  -.0014271   .0071492    -0.20   0.842    -.0154392     .012585
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L2_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L2_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |   -.121718   .0154488    -7.88   0.000    -.1519971   -.0914388
+       _cons |  -.0003255   .0068627    -0.05   0.962    -.0137762    .0131252
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L3_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L3_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1009558   .0168029    -6.01   0.000    -.1338889   -.0680228
+       _cons |  -.0007411   .0063853    -0.12   0.908    -.0132561    .0117738
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L4_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L4_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0993127   .0166542    -5.96   0.000    -.1319543   -.0666712
+       _cons |  -.0004669   .0064069    -0.07   0.942    -.0130241    .0120904
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L5_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L5_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0985564   .0167726    -5.88   0.000    -.1314301   -.0656827
+       _cons |  -.0017952    .006384    -0.28   0.779    -.0143075    .0107172
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L6_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L6_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1058846   .0166581    -6.36   0.000    -.1385339   -.0732353
+       _cons |  -.0011739   .0063591    -0.18   0.854    -.0136374    .0112896
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L7_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L7_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0984913   .0165881    -5.94   0.000    -.1310035   -.0659792
+       _cons |  -.0025129   .0063791    -0.39   0.694    -.0150157    .0099899
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L8_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L8_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |   -.110781    .016931    -6.54   0.000    -.1439652   -.0775968
+       _cons |  -.0000545   .0066261    -0.01   0.993    -.0130415    .0129325
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L9_1                      Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L9_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1130638   .0167314    -6.76   0.000    -.1458568   -.0802708
+       _cons |   .0001306   .0067517     0.02   0.985    -.0131026    .0133637
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L10_1                     Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L10_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0892888   .0167019    -5.35   0.000    -.1220239   -.0565537
+       _cons |  -.0033687   .0064544    -0.52   0.602     -.016019    .0092816
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L11_1                     Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L11_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0865767   .0164863    -5.25   0.000    -.1188893   -.0542641
+       _cons |  -.0079207   .0065883    -1.20   0.229    -.0208335     .004992
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L12_1                     Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L12_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.1070638   .0161223    -6.64   0.000     -.138663   -.0754647
+       _cons |    .009786   .0076467     1.28   0.201    -.0052013    .0247734
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+
+y-E[y|X]  = Y1_pystacked_L13_1                     Number of obs   =      4836
+D-E[D|X]  = D1_pystacked_L13_1
+------------------------------------------------------------------------------
+             |               Robust
+      lnearn |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    gender_r |  -.0503142    .017173    -2.93   0.003    -.0839728   -.0166557
+       _cons |   .0073999   .0076256     0.97   0.332    -.0075459    .0223457
+------------------------------------------------------------------------------
+(note: variable final was str5, now str10 to accommodate using data's values)
+file out_3702/results.dta saved
+. 
+. }
+
+.         
+. *****************************************************************************
+> *  
+. *** interactive: estimation                                                  
+>                                       ***
+. *****************************************************************************
+> *
+.         
+. if (`estimator'==2) {   
+. 
+.         ddml init interactive, kfolds($K) reps($R)
+.         ddml E[Y|X,D]: pystacked lnearn $X_expanded $pystring_reg
+.         ddml E[D|X]: pystacked gender_r $X_expanded $pystring_class
+.         ddml crossfit, shortstack poolstack
+.         ddml estimate, robust atet
+. 
+.         cap drop mse_*
+.         foreach var of varlist Y1_pystacked0* {
+  2.                  cap drop sqerr_`var'
+  3.                  gen double sqerr_`var'=(lnearn-`var')^2 if gender_r==0
+  4.                  sum sqerr_`var' if gender_r==0, meanonly
+  5.                  gen double mse_`var'=r(mean) if _n ==1 
+  6.         }
+.         foreach var of varlist Y1_pystacked1* {
+  2.                  cap drop sqerr_`var'
+  3.                  gen double sqerr_`var'=(lnearn-`var')^2 if gender_r==1
+  4.                  sum sqerr_`var' if gender_r==1, meanonly
+  5.                  gen double mse_`var'=r(mean) if _n ==1 
+  6.         }
+.         foreach var of varlist D1_* {
+  2.                  cap drop sqerr_`var'
+  3.                  gen double sqerr_`var'=(gender_r-`var')^2
+  4.                  sum sqerr_`var', meanonly
+  5.                  gen double mse_`var'=r(mean) if _n ==1 
+  6.         }
+.         preserve
+.                 keep mse_*
+.                 keep if _n==1
+.                 save `folder'/inter_mse, replace
+.         restore
+.         cap drop mse_*
+.         
+.         local mat gender_r_mse
+.                         ddml extract, show(mse)
+.                         mat `mat' = r(`mat')
+.                         mat list `mat'
+.                                 preserve
+.                                 svmat `mat'
+.                                 keep `mat'*
+.                                 keep if _n<=$L
+.                                 gen stack_type = "conventional" if _n==1
+.                                 replace stack_type = "pooled" if _n==2
+.                                 replace stack_type = "short" if _n==3
+.                                 gen model = "interactive"
+.                                 list if _n<=$L
+.                                 save `folder'/`mat'_inter_gender_mse, replace
+.                                 restore 
+.                                 
+.         local mat lnearn_mse
+.                         ddml extract, show(mse)
+.                         mat `mat' = r(`mat')
+.                         mat list `mat'
+.                                 preserve
+.                                 svmat `mat'
+.                                 keep `mat'*
+.                                 keep if _n<=(2*$L)
+.                                 gen stack_type = "conventional" if _n<=2
+.                                 replace stack_type = "pooled" if _n>=3 & _n<=
+> 4
+.                                 replace stack_type = "short" if _n>4
+.                                 gen model = "interactive"
+.                                 list if _n<=(2*$L)
+.                                 save `folder'/`mat'_inter_lnearn_mse, replace
+.                                 restore 
+.         
+.         foreach final in nnls1 singlebest ols avg {
+  2. 
+.                 ddml estimate, robust finalest(`final') atet
+  3.         
+.                         // regular stacking results
+.                         ddml estimate, mname(m0) spec(st) replay atet
+  4.                         regsave gender_r using `folder'/results.dta, ci ad
+> dlabel(model,interactive,seed,`seed',final,`final',learner,-1) append
+  5.                         
+.                         // shortstacking results
+.                         ddml estimate, mname(m0) spec(ss) replay atet
+  6.                         regsave gender_r using `folder'/results.dta, ci ad
+> dlabel(model,interactive,seed,`seed',final,`final',learner,-2) append
+  7.                         
+.                         // poolstacking results
+.                         ddml estimate, mname(m0) spec(ps) replay atet
+  8.                         regsave gender_r using `folder'/results.dta, ci ad
+> dlabel(model,interactive,seed,`seed',final,`final',learner,-3) append
+  9.                 
+.                         // pystacked weights
+.                         ddml extract, show(stweights)
+ 10.                         foreach mat in Y1_pystacked_w_mn D1_pystacked_w_mn
+>  {
+ 11.                                         ddml extract, show(stweights)
+ 12.                                         mat `mat' = r(`mat')
+ 13.                                         mat list `mat'
+ 14.                                                 preserve
+ 15.                                                 svmat `mat'
+ 16.                                                 keep `mat'*
+ 17.                                                 list if _n<=8
+ 18.                                                 save `folder'/`mat'_`final
+> '_regular_ia, replace
+ 19.                                                 restore
+ 20.                         }       
+ 21.                         // shortstacked weights
+.                         ddml extract, show(ssweights)
+ 22.                         foreach mat in Y_lnearn_ss D_gender_r_ss {
+ 23.                                         ddml extract, show(ssweights)
+ 24.                                         mat `mat' = r(`mat')
+ 25.                                         mat list `mat'
+ 26.                                                 preserve
+ 27.                                                 svmat `mat'
+ 28.                                                 keep `mat'*
+ 29.                                                 list if _n<=8
+ 30.                                                 save `folder'/`mat'_`final
+> '_short_ia, replace
+ 31.                                                 restore
+ 32.                         }       
+ 33.                         // poolstacked weights
+.                         ddml extract, show(psweights)
+ 34.                         foreach mat in Y_lnearn_ps D_gender_r_ps {
+ 35.                                         ddml extract, show(psweights)
+ 36.                                         mat `mat' = r(`mat')
+ 37.                                         mat list `mat'
+ 38.                                                 preserve
+ 39.                                                 svmat `mat'
+ 40.                                                 keep `mat'*
+ 41.                                                 list if _n<=8
+ 42.                                                 save `folder'/`mat'_`final
+> '_pooled_ia, replace
+ 43.                                                 restore
+ 44.                         }       
+ 45.         
+.         }
+. 
+.         forvalues i = 1(1)$L {
+  2.                         ddml estimate, y1(Y1_pystacked1_L`i'_1) y0(Y1_pyst
+> acked0_L`i'_1) ///
+>                                                         d(D1_pystacked_L`i'_1
+> ) robust atet foldvar(m0_sample_1  )
+  3.                         regsave gender_r using `folder'/results.dta, ci //
+> /
+>                                                 addlabel(model,interactive,se
+> ed,`seed',final,indiv,learner,`i') ///
+>                                                 append
+  4.         }
+. 
+. }       
+
+.         
+. *****************************************************************************
+> *  
+. *** interactive NX: short-stacking                                           
+>                                       ***
+. *****************************************************************************
+> *
+. 
+. if (`estimator'==3) {
+. 
+. gen one = 1     
+. 
+.         cap drop y0base*
+.         cap drop dbase*
+.         cap drop y1base*
+. 
+.         *** no cross-fitting
+.         pystacked lnearn $X_expanded   $pystring_reg0  if gender_r == 0, type
+> (reg) njobs($cores)  
+.                 mat nxw_ia_y0 = e(weights)
+.                 mat list nxw_ia_y0
+.                                 preserve
+.                                 svmat nxw_ia_y0
+.                                 keep nxw_ia_y0*
+.                                 save `folder'/nxw_ia_y0, replace
+.                                 restore
+.         predict y0base0, xb
+.         predict y0base, base
+. 
+.         pystacked lnearn $X_expanded  $pystring_reg0 if gender_r == 1  , type
+> (reg) njobs($cores)  
+.                 mat nxw_ia_y1 = e(weights)
+.                 mat list nxw_ia_y1
+.                                 preserve
+.                                 svmat nxw_ia_y1
+.                                 keep nxw_ia_y1*
+.                                 save `folder'/nxw_ia_y1, replace
+.                                 restore
+.         predict y1base0, xb
+.         predict y1base, base
+. 
+.         pystacked gender_r $X_expanded $pystring_class  
+.                 mat nxw_ia_d = e(weights)
+.                 mat list nxw_ia_d
+.                                 preserve
+.                                 svmat nxw_ia_d
+.                                 keep nxw_ia_d*
+.                                 save `folder'/nxw_ia_d, replace
+.                                 restore         
+.         predict dbase0, pr
+.         predict dbase, base pr
+.         
+.         forvalues i = 0(1)$L {
+  2.                         _estimate_ate interactive, yname(lnearn) dname(gen
+> der_r) ///
+>                                                 y0(y0base`i') y1(y1base`i') d
+> (dbase`i') ///
+>                                                 atet foldid(one) robust model
+> (interactive)
+  3.                         regsave gender_r using `folder'/results.dta, ///
+>                                                 ci addlabel(model,nxinter,see
+> d,`seed',final,nx,learner,`i') append
+  4.         }
+.                 
+. }
+
+.         
+. *****************************************************************************
+> *  
+. *** partial NX: short-stacking                                               
+>                                       ***
+. *****************************************************************************
+> *
+. 
+. if (`estimator'==4) {
+.         
+. cap gen one = 1 
+. 
+.         cap drop Ybase* 
+.         cap drop Dbase*
+. 
+.         *** no cross-fitting
+.         pystacked lnearn $X_expanded $pystring_reg 
+.                 mat nxw_y = e(weights)
+.                 mat list nxw_y
+.                                 preserve
+.                                 svmat nxw_y
+.                                 keep nxw_y*
+.                                 save `folder'/nxw_y, replace
+.                                 restore
+.         predict Ybase0
+.         predict Ybase, basexb
+. 
+.         pystacked gender_r $X_expanded $pystring_reg 
+.                 mat nxw_d = e(weights)
+.                 mat list nxw_d
+.                                 preserve
+.                                 svmat nxw_d
+.                                 keep nxw_d*
+.                                 save `folder'/nxw_d, replace
+.                                 restore         
+.         predict Dbase0
+.         predict Dbase, basexb
+. 
+.         forvalues i = 0(1)$L {
+  2.                 cap drop Ytil
+  3.                 cap drop Dtil
+  4.                 gen Ytil = lnearn - Ybase`i'
+  5.                 gen Dtil = gender_r - Dbase`i'
+  6.                 reg Ytil Dtil, robust
+  7.                 regsave Dtil using `folder'/results.dta, ///
+>                         ci addlabel(model,nxpartial,seed,`seed',final,nx,lear
+> ner,`i') append
+  8.         }
+. 
+. }
+
+.         
+. cap log close
